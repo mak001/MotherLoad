@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.mak001.motherload.game.GamePanel;
+
 public class Motherload extends Activity {
 
     @Override
