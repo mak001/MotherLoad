@@ -1,4 +1,4 @@
-package com.mak001.motherload;
+package com.mak001.motherload.game;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
@@ -6,9 +6,9 @@ import android.view.SurfaceHolder;
 /**
  * Created by Matthew on 2/21/2017.
  */
-public class MainThread extends Thread {
+public class GameThread extends Thread {
 
-    public static final int MAX_FPS = 30;
+    private static final int MAX_FPS = 30;
 
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
@@ -16,7 +16,7 @@ public class MainThread extends Thread {
     private boolean running;
     private Canvas canvas;
 
-    public MainThread(SurfaceHolder surfaceHolder, GamePanel gamePanel) {
+    public GameThread(SurfaceHolder surfaceHolder, GamePanel gamePanel) {
         super();
         this.surfaceHolder = surfaceHolder;
         this.gamePanel = gamePanel;
@@ -26,7 +26,7 @@ public class MainThread extends Thread {
     @Override
     public void run() {
         long startTime;
-        long timeMillis = 1000 / MAX_FPS;
+        long timeMillis;
         long waitTime;
         int frameCount = 0;
         long totalTime = 0;
@@ -58,7 +58,7 @@ public class MainThread extends Thread {
 
             try {
                 if (waitTime > 0) {
-                    this.sleep(waitTime);
+                    sleep(waitTime);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
