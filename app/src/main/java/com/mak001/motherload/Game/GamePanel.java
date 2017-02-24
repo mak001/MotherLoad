@@ -1,6 +1,5 @@
-package com.mak001.motherload;
+package com.mak001.motherload.game;
 
-import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,6 +8,8 @@ import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.mak001.motherload.Player;
 
 /**
  * Created by Matthew on 2/21/2017.
