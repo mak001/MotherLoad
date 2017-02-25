@@ -5,10 +5,13 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 
+import com.mak001.motherload.game.Renderable;
+import com.mak001.motherload.game.Updatable;
+
 /**
  * Created by Matthew on 2/21/2017.
  */
-public class Player implements GameObject {
+public class Player implements Renderable, Updatable {
 
     private Rect rectangle;
     private int color;

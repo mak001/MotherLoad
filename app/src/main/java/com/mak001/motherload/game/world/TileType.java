@@ -1,8 +1,10 @@
 package com.mak001.motherload.game.world;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.graphics.BitmapFactory;
+
+import com.mak001.motherload.R;
+import com.mak001.motherload.game.Constants;
 
 /**
  * Created by Matthew on 2/23/2017.
@@ -11,7 +13,7 @@ import android.graphics.Paint;
 public enum TileType {
 
     AIR(),
-    DIRT();
+    DIRT(R.drawable.tiles_dirt);
 
     private final int id;
     private final int depth;
@@ -19,26 +21,35 @@ public enum TileType {
     private final int weight;
     private final int damage;
     private final Bitmap image;
-
     TileType() {
-        this(null);
+        this(-1);
     }
 
-    TileType(Bitmap image) {
-        this(0, image);
+    TileType(int imageID) {
+        this(0, imageID);
     }
 
-    TileType(int weight, Bitmap image) {
-        this(weight, 0, 0, 0, image);
+    TileType(int weight, int imageID) {
+        this(weight, 0, 0, 0, imageID);
     }
 
-    TileType(int weight, int depth, int hardness, int damage, Bitmap image) {
+    TileType(int weight, int depth, int hardness, int damage, int imageID) {
         this.id = this.ordinal();
         this.depth = depth;
         this.hardness = hardness;
         this.weight = weight;
         this.damage = damage;
-        this.image = image;
+
+        if (imageID == -1) {
+            this.image = null;
+        } else {
+            this.image = BitmapFactory.decodeResource(Constants.RESOURCES, imageID);
+        }
+        //R.drawable;
+    }
+
+    public static TileType getIndex(int i) {
+        return TileType.values()[i];
     }
 
     public int getID() {

@@ -10,7 +10,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.mak001.motherload.Player;
-import com.mak001.motherload.game.GameThread;
+import com.mak001.motherload.game.world.World;
 
 /**
  * Created by Matthew on 2/21/2017.
@@ -22,6 +22,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Player player;
     private Point playerPoint;
 
+    private World world;
+
     public GamePanel(Context context) {
         super(context);
 
@@ -31,6 +33,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         player = new Player(new Rect(100, 100, 200, 200), Color.rgb(255, 255, 0));
 
         playerPoint = new Point(150, 150);
+
+        world = new World();
 
         setFocusable(true);
     }
@@ -88,5 +92,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawColor(Color.BLACK);
 
         player.draw(canvas);
+        world.draw(canvas);
     }
 }
