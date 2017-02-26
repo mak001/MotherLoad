@@ -30,7 +30,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
         thread = new GameThread(getHolder(), this);
 
-        player = new Player(new Rect(100, 100, 200, 200), Color.rgb(255, 255, 0));
+        player = new Player(new Rect(0, 0, 96, 96), Color.rgb(255, 255, 0));
 
         playerPoint = new Point(150, 150);
 
@@ -91,7 +91,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         canvas.drawColor(Color.BLACK);
 
-        player.draw(canvas);
         world.draw(canvas);
+
+        player.draw(canvas);
     }
 }

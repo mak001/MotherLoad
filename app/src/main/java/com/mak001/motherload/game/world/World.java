@@ -15,23 +15,34 @@ public class World implements Renderable {
     private int[][] tiles;
     private int lastGeneratedLayer = 0;
 
-    public World() {
-        this(32, 32);
-    }
 
-    public World(int tileWidth, int tileHeight) {
-        this.tileWidth = tileWidth;
-        this.tileHeight = tileHeight;
+    public World() {
+        this.tileWidth = TileType.DIRT.getImage().getWidth();
+        this.tileHeight = TileType.DIRT.getImage().getHeight();
 
         tiles = new int[25][500];
 
         generate(tiles.length);
     }
 
+    private boolean drew = false;
+
     @Override
     public void draw(Canvas canvas) {
         // TODO
-        Paint paint = new Paint();
+        if (!drew) {
+            Paint paint = new Paint();
+            for (int x = 0; x < tiles.length; x++) {
+                for (int y = 0; y < lastGeneratedLayer; y++) {
+                    TileType tile = TileType.getIndex(tiles[x][y]);
+                    if (tile.getImage() != null) {
+                        canvas.drawBitmap(tile.getImage(), x * tileWidth, y * tileHeight, paint);
+                    } else {
+                        System.out.println("image null at: " + x + ", " + y);
+                    }
+                }
+            }
+        }
     }
 
     public int getTileAt(int x, int y) {
@@ -52,6 +63,13 @@ public class World implements Renderable {
     public void generate(int height) {
         // lastGeneratedLayer
 
+        for (int x = 0; x < tiles.length; x++) {
+            for (int y = lastGeneratedLayer; y < lastGeneratedLayer + height; y++) {
+                tiles[x][y] = TileType.DIRT.ordinal();
+
+
+            }
+        }
 
         lastGeneratedLayer += height;
     }

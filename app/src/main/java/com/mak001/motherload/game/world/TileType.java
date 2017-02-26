@@ -16,11 +16,11 @@ public enum TileType {
     DIRT(R.drawable.tiles_dirt);
 
     private final int id;
-    private final int depth;
+    private final int minDepth, maxDepth;
     private final int hardness;
-    private final int weight;
     private final int damage;
     private final Bitmap image;
+
     TileType() {
         this(-1);
     }
@@ -29,21 +29,27 @@ public enum TileType {
         this(0, imageID);
     }
 
-    TileType(int weight, int imageID) {
-        this(weight, 0, 0, 0, imageID);
+    TileType(int minDepth, int imageID) {
+        this(minDepth, 0, 0, imageID);
     }
 
-    TileType(int weight, int depth, int hardness, int damage, int imageID) {
+    TileType(int minDepth, int maxDepth, int hardness, int imageID) {
+        this(minDepth, maxDepth, hardness, 0, imageID);
+    }
+
+    TileType(int minDepth, int maxDepth, int hardness, int damage, int imageID) {
         this.id = this.ordinal();
-        this.depth = depth;
+        this.minDepth = minDepth;
         this.hardness = hardness;
-        this.weight = weight;
+        this.maxDepth = maxDepth;
         this.damage = damage;
 
         if (imageID == -1) {
             this.image = null;
         } else {
-            this.image = BitmapFactory.decodeResource(Constants.RESOURCES, imageID);
+            Bitmap image = BitmapFactory.decodeResource(Constants.RESOURCES, imageID);
+            this.image = Bitmap.createScaledBitmap(image, 96, 96, false);
+            //this.image = image;
         }
         //R.drawable;
     }
@@ -57,15 +63,15 @@ public enum TileType {
     }
 
     public int getMinDepth() {
-        return depth;
+        return minDepth;
+    }
+
+    public int getMaxDepth() {
+        return maxDepth;
     }
 
     public int getDamage() {
         return damage;
-    }
-
-    public int getWeight() {
-        return weight;
     }
 
     public int getHardness() {
