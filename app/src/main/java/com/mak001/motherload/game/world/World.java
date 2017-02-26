@@ -33,7 +33,7 @@ public class World implements Renderable {
             for (int y = 0; y < lastGeneratedLayer; y++) {
                 TileType tile = TileType.getIndex((int) tiles[x][y]);
                 if (tile.getImage() != null) {
-                    canvas.drawBitmap(tile.getImage(), x * tileWidth, y * tileHeight, paint);
+                    canvas.drawBitmap(tile.getImage(tiles[x][y]), x * tileWidth, y * tileHeight, paint);
                 }
             }
         }
@@ -59,9 +59,17 @@ public class World implements Renderable {
 
         for (int x = 0; x < tiles.length; x++) {
             for (int y = lastGeneratedLayer; y < lastGeneratedLayer + height; y++) {
-                tiles[x][y] = TileType.DIRT.ordinal();
 
+                float chance = (float) Math.random();
 
+                for (int i = 0; i < TileType.values().length; i++) {
+
+                    TileType curr = TileType.getIndex(i);
+                    if (chance <= curr.getChance()) {
+                        tiles[x][y] = curr.getID();
+
+                    }
+                }
             }
         }
 

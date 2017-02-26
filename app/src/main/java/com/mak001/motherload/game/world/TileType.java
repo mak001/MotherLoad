@@ -14,44 +14,59 @@ import java.util.Random;
 
 public enum TileType {
 
-    AIR(),
-    DIRT(R.drawable.tiles_dirt);
+    AIR(0.05f),
+    DIRT(0.85f, new int[]{R.drawable.tiles_dirt, R.drawable.tiles_dirt_2});
 
     private final int id;
     private final int minDepth, maxDepth;
     private final int hardness;
     private final int damage;
 
+    private final float chance;
+
     private final Bitmap[] images;
 
 
-    TileType() {
-        this(-1);
+    TileType(float chance) {
+        this(chance, -1);
     }
 
-    TileType(int imageID) {
-        this(0, imageID);
+    TileType(float chance, int imageID) {
+        this(0, chance, imageID);
     }
 
-    TileType(int minDepth, int imageID) {
-        this(minDepth, 0, 0, imageID);
+    TileType(float chance, int[] imageIDs) {
+        this(0, chance, imageIDs);
     }
 
-    TileType(int minDepth, int maxDepth, int hardness, int imageID) {
-        this(minDepth, maxDepth, hardness, 0, imageID);
+    TileType(int minDepth, float chance, int imageID) {
+        this(minDepth, 0, 0, chance, imageID);
     }
 
-    TileType(int minDepth, int maxDepth, int hardness, int damage, int imageID) {
-        this(minDepth, maxDepth, hardness, damage, new int[]{imageID});
+    TileType(int minDepth, float chance, int[] imageIDs) {
+        this(minDepth, 0, 0, chance, imageIDs);
     }
 
-    TileType(int minDepth, int maxDepth, int hardness, int damage, int[] imageIDs) {
+    TileType(int minDepth, int maxDepth, int hardness, float chance, int imageID) {
+        this(minDepth, maxDepth, hardness, 0, chance, imageID);
+    }
+
+    TileType(int minDepth, int maxDepth, int hardness, float chance, int[] imageIDs) {
+        this(minDepth, maxDepth, hardness, 0, chance, imageIDs);
+    }
+
+    TileType(int minDepth, int maxDepth, int hardness, int damage, float chance, int imageID) {
+        this(minDepth, maxDepth, hardness, damage, chance, new int[]{imageID});
+    }
+
+    TileType(int minDepth, int maxDepth, int hardness, int damage, float chance, int[] imageIDs) {
 
         this.id = this.ordinal();
         this.minDepth = minDepth;
         this.hardness = hardness;
         this.maxDepth = maxDepth;
         this.damage = damage;
+        this.chance = chance;
 
         images = new Bitmap[imageIDs.length];
 
@@ -89,12 +104,21 @@ public enum TileType {
         return hardness;
     }
 
+    public float getChance() {
+        return chance;
+    }
+
     public Bitmap getImage() {
         return images[0];
     }
 
     public Bitmap getImage(int index) {
         return images[index];
+    }
+
+    public Bitmap getImage(float index) {
+        int i = Integer.parseInt(Float.toString(index).split("\\.")[1]);
+        return getImage(i);
     }
 
 }
