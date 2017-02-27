@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.SoundPool;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -23,6 +24,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Point playerPoint;
 
     private World world;
+    private SoundManager soundManager;
 
     public GamePanel(Context context) {
         super(context);
@@ -35,6 +37,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         playerPoint = new Point(150, 150);
 
         world = new World();
+
+        soundManager = new SoundManager();
+
+
 
         setFocusable(true);
     }
