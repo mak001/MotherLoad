@@ -75,13 +75,17 @@ public enum TileType {
                 images[i] = null;
             } else {
                 Bitmap image = BitmapFactory.decodeResource(Constants.RESOURCES, imageIDs[i]);
-                images[i] = Bitmap.createScaledBitmap(image, 96, 96, false);
+                images[i] = Bitmap.createScaledBitmap(image, Constants.TILE_SIZE, Constants.TILE_SIZE, false);
             }
         }
     }
 
     public static TileType getIndex(int i) {
         return TileType.values()[i];
+    }
+
+    public static TileType getDefault() {
+        return TileType.DIRT;
     }
 
     public float getID() {
