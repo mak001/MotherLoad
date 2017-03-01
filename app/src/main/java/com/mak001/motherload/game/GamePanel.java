@@ -5,12 +5,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.media.SoundPool;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.mak001.motherload.Player;
+import com.mak001.motherload.game.player.Player;
 import com.mak001.motherload.game.world.World;
 
 /**
