@@ -4,14 +4,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.view.MotionEvent;
 
 import com.mak001.motherload.game.Renderable;
+import com.mak001.motherload.game.TouchListener;
 import com.mak001.motherload.game.Updatable;
 
 /**
  * Created by Matthew on 2/21/2017.
  */
-public class Player implements Renderable, Updatable {
+public class Player implements Renderable, Updatable, TouchListener {
 
     private Rect rectangle;
     private int color;
@@ -36,5 +38,11 @@ public class Player implements Renderable, Updatable {
 
     public void update(Point point) {
         rectangle.set(point.x - (rectangle.width() / 2), (point.y - rectangle.height() / 2), point.x + (rectangle.width() / 2), (point.y + rectangle.height() / 2));
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // TODO
+        return true;
     }
 }

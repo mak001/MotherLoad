@@ -19,5 +19,6 @@ public class Constants {
     public static final Vector2 GRAVITY = new Vector2(0, -9.8f);
 
     public static Resources RESOURCES;
+    public static GamePanel GAME_PANEL;
 
 }

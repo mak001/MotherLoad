@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.mak001.motherload.game.player.JoyStick;
 import com.mak001.motherload.game.player.Player;
 import com.mak001.motherload.game.world.World;
 
@@ -24,10 +25,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     private World world;
     private SoundManager soundManager;
+    private JoyStick joyStick;
+
+    private State currentState = State.TITLE_SCREEN;
 
     public GamePanel(Context context) {
         super(context);
-
+        Constants.GAME_PANEL = this;
         getHolder().addCallback(this);
         thread = new GameThread(getHolder(), this);
 
@@ -36,12 +40,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         playerPoint = new Point(150, 150);
 
         world = new World();
+        joyStick = new JoyStick(0, 0, 256);
 
         soundManager = new SoundManager();
 
 
-
         setFocusable(true);
+
+        setState(State.PLAYING);
     }
 
     @Override
@@ -75,12 +81,20 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //return super.onTouchEvent(event);
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_MOVE:
-                playerPoint.set((int) event.getX(), (int) event.getY());
+        switch (currentState) {
+            case PLAYING:
+                player.onTouchEvent(event);
+                joyStick.onTouchEvent(event);
                 break;
+            case TITLE_SCREEN:
+
+                break;
+            case SHOP_OPEN:
+
+                break;
+            default:
+                // breaks the game, unsure what to do
+                return false;
         }
 
         return true;
@@ -99,5 +113,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         world.draw(canvas);
 
         player.draw(canvas);
+
+        if (currentState.equals(State.PLAYING)) {
+            joyStick.draw(canvas);
+        }
+    }
+
+    public void setState(State s) {
+        currentState = s;
+    }
+
+    public enum State {
+        TITLE_SCREEN, PLAYING, SHOP_OPEN
     }
 }
