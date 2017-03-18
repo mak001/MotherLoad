@@ -25,7 +25,7 @@ public class JoyStick extends Control {
     private final Point center;
     private final Bitmap image;
 
-    private Vector2 direction;
+    private final Vector2 direction;
 
     public JoyStick(int x, int y, int size) {
         this(x, y, size, size);
@@ -41,7 +41,7 @@ public class JoyStick extends Control {
         Bitmap image = BitmapFactory.decodeResource(Constants.RESOURCES, R.drawable.controls_joy_stick);
         this.image = Bitmap.createScaledBitmap(image, height, width, false);
 
-        direction = Vector2.Zero;
+        direction = Vector2.Zero.cpy();
     }
 
     public Vector2 getDirection() {
@@ -56,15 +56,27 @@ public class JoyStick extends Control {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (between(x, x + width, event.getX()) && between(y, y + height, event.getY())) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_MOVE:
+                if (between(x, x + width, event.getX()) && between(y, y + height, event.getY())) {
 
-            float dx = ((event.getX() - center.x) / width) * 2;
-            float dy = ((event.getY() - center.y) / height) * 2;
+                    float dx = ((event.getX() - center.x) / width) * 2;
+                    float dy = ((event.getY() - center.y) / height) * 2;
 
-            direction = new Vector2(roundTwo(dx), roundTwo(dy));
-            System.out.println(direction);
-        } else {
-            return false;
+                    direction.x = roundTwo(dx);
+                    direction.y = roundTwo(dy);
+                    // System.out.println(direction);
+                } else {
+                    direction.x = 0;
+                    direction.y = 0;
+                }
+                break;
+
+            case MotionEvent.ACTION_UP:
+                direction.x = 0;
+                direction.y = 0;
+                break;
         }
         return true;
     }

@@ -83,7 +83,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //return super.onTouchEvent(event);
         switch (currentState) {
             case PLAYING:
-                player.onTouchEvent(event);
                 joyStick.onTouchEvent(event);
                 break;
             case TITLE_SCREEN:
@@ -101,7 +100,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        player.update(playerPoint);
+        player.move(joyStick.getDirection());
     }
 
     @Override

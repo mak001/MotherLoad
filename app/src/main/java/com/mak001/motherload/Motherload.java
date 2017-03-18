@@ -33,8 +33,21 @@ public class Motherload extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        backgroundPlayer.pause();
+        //finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundPlayer.start();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        backgroundPlayer.stop();
         backgroundPlayer.release();
-        finish();
     }
 
 }
