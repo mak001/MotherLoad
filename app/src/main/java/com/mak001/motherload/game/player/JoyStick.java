@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.R;
 import com.mak001.motherload.game.Constants;
+import com.mak001.motherload.game.Methods;
 
 /**
  * Created by Matthew on 3/18/2017.
@@ -59,7 +60,7 @@ public class JoyStick extends Control {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
-                if (between(x, x + width, event.getX()) && between(y, y + height, event.getY())) {
+                if (Methods.between(x, x + width, event.getX()) && Methods.between(y, y + height, event.getY())) {
 
                     float dx = ((event.getX() - center.x) / width) * 2;
                     float dy = ((event.getY() - center.y) / height) * 2;
@@ -83,10 +84,6 @@ public class JoyStick extends Control {
 
     private float roundTwo(float f) {
         return Math.round(f * 100f) / 100f;
-    }
-
-    private boolean between(float a, float b, float x) {
-        return a < x && x < b;
     }
 
 }

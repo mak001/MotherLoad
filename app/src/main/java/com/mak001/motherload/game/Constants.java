@@ -14,7 +14,7 @@ public class Constants {
     public static final int TILE_SIZE = 96;
 
     // move sped multiplier for player
-    public static final float MOVE_SPEED = 10;
+    public static final float MOVE_SPEED = 15;
 
     public static final Vector2 GRAVITY = new Vector2(0, -9.8f);
 

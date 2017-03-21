@@ -5,6 +5,7 @@ import android.graphics.Paint;
 
 import com.mak001.motherload.game.Camera;
 import com.mak001.motherload.game.Constants;
+import com.mak001.motherload.game.Methods;
 import com.mak001.motherload.game.helpers.Renderable;
 
 /**
@@ -29,10 +30,17 @@ public class World implements Renderable {
         Paint paint = new Paint();
         for (int x = 0; x < tiles.length; x++) {
             for (int y = 0; y < lastGeneratedLayer; y++) {
-                TileType tile = TileType.getIndex((int) tiles[x][y]);
-                if (tile.getImage() != null) {
-                    canvas.drawBitmap(tile.getImage(tiles[x][y]), (x * Constants.TILE_SIZE) - camera.getX(), (y * Constants.TILE_SIZE) - camera.getY(), paint);
+
+                if (Methods.between(Math.floor(camera.getX() - Constants.TILE_SIZE), Math.ceil(camera.getX() + Constants.SCREEN_WIDTH + Constants.TILE_SIZE), x * Constants.TILE_SIZE) &&
+                        Methods.between(Math.floor(camera.getY() - Constants.TILE_SIZE), Math.ceil(camera.getY() + Constants.SCREEN_HEIGHT + Constants.TILE_SIZE), y * Constants.TILE_SIZE)) {
+
+                    TileType tile = TileType.getIndex((int) tiles[x][y]);
+                    if (tile.getImage() != null) {
+                        canvas.drawBitmap(tile.getImage(tiles[x][y]), (x * Constants.TILE_SIZE) - camera.getX(), (y * Constants.TILE_SIZE) - camera.getY(), paint);
+                    }
+
                 }
+
             }
         }
     }
