@@ -41,7 +41,7 @@ public class JoyStick extends Control {
         Bitmap image = BitmapFactory.decodeResource(Constants.RESOURCES, R.drawable.controls_joy_stick);
         this.image = Bitmap.createScaledBitmap(image, height, width, false);
 
-        direction = Vector2.Zero.cpy();
+        direction = Vector2.Zero();
     }
 
     public Vector2 getDirection() {

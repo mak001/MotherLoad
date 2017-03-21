@@ -1,14 +1,15 @@
 package com.mak001.motherload.game;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.game.player.JoyStick;
 import com.mak001.motherload.game.player.Player;
 import com.mak001.motherload.game.world.World;
@@ -20,26 +21,33 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameThread thread;
 
-    private Player player;
-    private Point playerPoint;
-
-    private World world;
-    private SoundManager soundManager;
     private JoyStick joyStick;
+
+    private Player player;
+    private Camera camera;
+    private World world;
+
+    private SoundManager soundManager;
+
 
     private State currentState = State.TITLE_SCREEN;
 
     public GamePanel(Context context) {
         super(context);
+
+        Constants.SCREEN_WIDTH = Resources.getSystem().getDisplayMetrics().widthPixels;
+        Constants.SCREEN_HEIGHT = Resources.getSystem().getDisplayMetrics().heightPixels;
+
         Constants.GAME_PANEL = this;
         getHolder().addCallback(this);
         thread = new GameThread(getHolder(), this);
 
+        // 338.49997,-54.496044
         player = new Player(new Rect(0, 0, 96, 96), Color.rgb(255, 255, 0));
+        player.setPos(338, -54);
+        camera = new Camera();
 
-        playerPoint = new Point(150, 150);
-
-        world = new World();
+        world = new World(camera);
         joyStick = new JoyStick(0, 0, 256);
 
         soundManager = new SoundManager();
@@ -101,6 +109,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     public void update() {
         player.move(joyStick.getDirection());
+        camera.setPos(player.getX() - (Constants.SCREEN_WIDTH / 2), player.getY() - (Constants.SCREEN_HEIGHT / 2));
+        //System.out.println(player.getLocation() + " :: (" + (camera.getX() + (Constants.SCREEN_WIDTH / 2)) + ", " + (camera.getY() + Constants.SCREEN_HEIGHT / 2) + ")");
     }
 
     @Override

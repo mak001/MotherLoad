@@ -20,5 +20,6 @@ public class Constants {
 
     public static Resources RESOURCES;
     public static GamePanel GAME_PANEL;
-
+    public static int SCREEN_WIDTH;
+    public static int SCREEN_HEIGHT;
 }

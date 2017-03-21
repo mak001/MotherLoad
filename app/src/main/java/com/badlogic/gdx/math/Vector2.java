@@ -25,9 +25,9 @@ import com.badlogic.gdx.utils.NumberUtils;
 public class Vector2 implements Serializable {
     private static final long serialVersionUID = 913902788239530931L;
 
-    public final static Vector2 X = new Vector2(1, 0);
-    public final static Vector2 Y = new Vector2(0, 1);
-    public final static Vector2 Zero = new Vector2(0, 0);
+    private final static Vector2 X = new Vector2(1, 0);
+    private final static Vector2 Y = new Vector2(0, 1);
+    private final static Vector2 Zero = new Vector2(0, 0);
 
     /** the x-component of this vector **/
     public float x;
@@ -52,6 +52,17 @@ public class Vector2 implements Serializable {
         set(v);
     }
 
+    public static final Vector2 Zero() {
+        return Zero.cpy();
+    }
+
+    public static final Vector2 X() {
+        return X.cpy();
+    }
+
+    public static final Vector2 Y() {
+        return Y.cpy();
+    }
 
     public Vector2 cpy() {
         return new Vector2(this);

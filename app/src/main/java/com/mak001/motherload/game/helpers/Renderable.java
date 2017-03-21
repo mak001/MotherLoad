@@ -1,4 +1,4 @@
-package com.mak001.motherload.game;
+package com.mak001.motherload.game.helpers;
 
 import android.graphics.Canvas;
 
