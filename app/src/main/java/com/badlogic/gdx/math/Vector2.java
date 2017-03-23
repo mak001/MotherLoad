@@ -64,6 +64,14 @@ public class Vector2 implements Serializable {
         return Y.cpy();
     }
 
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
     public Vector2 cpy() {
         return new Vector2(this);
     }

@@ -1,45 +1,92 @@
 package com.mak001.motherload.game.player;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.provider.Settings;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.game.Constants;
-import com.mak001.motherload.game.helpers.Locatable;
+import com.mak001.motherload.game.helpers.Collidable;
 import com.mak001.motherload.game.helpers.Renderable;
 import com.mak001.motherload.game.helpers.Updatable;
+import com.mak001.motherload.game.world.Tile;
+import com.mak001.motherload.game.world.TileType;
 
 /**
  * Created by Matthew on 2/21/2017.
  */
-public class Player extends Locatable implements Renderable, Updatable {
+public class Player extends Collidable implements Renderable, Updatable {
 
-    private Rect rectangle;
     private int color;
+    private Rect image;
+    private Vector2 velocity;
 
 
     public Player(Rect rectangle, int color) {
-        super();
-        this.rectangle = rectangle;
+        super(rectangle.left, rectangle.top);
         this.color = color;
-        rectangle.offsetTo((Constants.SCREEN_WIDTH / 2) - (rectangle.width() / 2), (Constants.SCREEN_HEIGHT / 2) - (rectangle.height() / 2));
+        this.velocity = Vector2.Zero();
+
+        image = rectangle;
+        setPos((Constants.SCREEN_WIDTH / 2) - (rectangle.width() / 2), (Constants.SCREEN_HEIGHT / 2) - (rectangle.height() / 2));
+        image.offsetTo((Constants.SCREEN_WIDTH / 2) - (image.width() / 2), (Constants.SCREEN_HEIGHT / 2) - (image.height() / 2));
+
     }
 
     @Override
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(color);
-        canvas.drawRect(rectangle, paint);
+        canvas.drawRect(collider, paint);
+
+        paint.setColor(Color.CYAN);
+        canvas.drawRect(image, paint);
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         // TODO - https://www.youtube.com/watch?v=qwuPiaFU37w&t=1250
+        Vector2 oldLoc = getLocation();
+        boolean collideX = false;
+        boolean collideY = false;
+
+        velocity.y -= (Constants.GRAVITY.getY() * Constants.MOVE_SPEED * delta);
+
+        if (Constants.MAX_FALL_SPEED < velocity.y) {
+            velocity.y = Constants.MAX_FALL_SPEED;
+        } else if (velocity.y < -Constants.MAX_FALL_SPEED) {
+            velocity.y = -Constants.MAX_FALL_SPEED;
+        }
+
+        // location.x = location.x + velocity.x * Constants.MOVE_SPEED * delta;
+        // location.y = location.y + velocity.y * Constants.MOVE_SPEED * delta;
+
+
+        if (collideX) {
+            location.x = oldLoc.getX();
+            velocity.x = 0;
+        }
+
+        if (collideY) {
+            location.y = oldLoc.getY();
+            velocity.y = 0;
+        }
+
+
+        // System.out.println(location + " :: " + collideX + ", " + collideY);
+
     }
 
-    public void move(Vector2 vec) {
-        location.add(vec.cpy().scl(Constants.MOVE_SPEED));
+    private boolean isCollision(float x, float y) {
+        return Constants.WORLD.getTileAt((int) (x / Constants.TILE_SIZE), (int) (y / Constants.TILE_SIZE)).getTileType().ordinal() != 0;
+    }
+
+    public void move(Vector2 vec, float delta) {
+
+        velocity.add(vec.cpy().scl(Constants.MOVE_SPEED * delta));
+
         /*
         rectangle.offsetTo(
                 (int) (location.x - (rectangle.width() / 2)),

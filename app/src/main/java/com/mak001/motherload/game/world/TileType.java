@@ -6,8 +6,6 @@ import android.graphics.BitmapFactory;
 import com.mak001.motherload.R;
 import com.mak001.motherload.game.Constants;
 
-import java.util.Random;
-
 /**
  * Created by Matthew on 2/23/2017.
  */
@@ -17,7 +15,6 @@ public enum TileType {
     AIR(0.05f),
     DIRT(0.85f, new int[]{R.drawable.tiles_dirt, R.drawable.tiles_dirt_2});
 
-    private final int id;
     private final int minDepth, maxDepth;
     private final int hardness;
     private final int damage;
@@ -61,7 +58,6 @@ public enum TileType {
 
     TileType(int minDepth, int maxDepth, int hardness, int damage, float chance, int[] imageIDs) {
 
-        this.id = this.ordinal();
         this.minDepth = minDepth;
         this.hardness = hardness;
         this.maxDepth = maxDepth;
@@ -88,8 +84,8 @@ public enum TileType {
         return TileType.DIRT;
     }
 
-    public float getID() {
-        return id + ((int) (Math.random() * images.length) / 100f);
+    public int getImageID() {
+        return (int) (Math.random() * images.length);
     }
 
     public int getMinDepth() {
@@ -112,17 +108,10 @@ public enum TileType {
         return chance;
     }
 
-    public Bitmap getImage() {
-        return images[0];
-    }
-
     public Bitmap getImage(int index) {
+        if (images.length <= index)
+            index = images.length - 1;
         return images[index];
-    }
-
-    public Bitmap getImage(float index) {
-        int i = Integer.parseInt(Float.toString(index).split("\\.")[1]);
-        return getImage(i);
     }
 
 }

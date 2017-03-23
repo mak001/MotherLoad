@@ -6,5 +6,5 @@ package com.mak001.motherload.game.helpers;
 
 public interface Updatable {
 
-    void update();
+    void update(float delta);
 }

@@ -31,6 +31,7 @@ public class GameThread extends Thread {
         int frameCount = 0;
         long totalTime = 0;
         long targetTime = 1000 / MAX_FPS;
+        float lastFrame = 0f;
 
         while (running) {
             startTime = System.nanoTime();
@@ -39,7 +40,8 @@ public class GameThread extends Thread {
             try {
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder) {
-                    this.gamePanel.update();
+
+                    this.gamePanel.update(lastFrame);
                     this.gamePanel.draw(canvas);
                 }
             } catch (Exception e) {
@@ -63,6 +65,7 @@ public class GameThread extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             totalTime += System.nanoTime() - startTime;
             frameCount++;
 
@@ -73,6 +76,8 @@ public class GameThread extends Thread {
                 totalTime = 0;
                 //System.out.println(averageFPS);
             }
+
+            lastFrame = (System.nanoTime() - startTime) / 1000000000f;
         }
     }
 

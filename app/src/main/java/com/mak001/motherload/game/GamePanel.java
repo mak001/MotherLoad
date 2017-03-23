@@ -23,9 +23,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     private JoyStick joyStick;
 
-    private Player player;
     private Camera camera;
-    private World world;
 
     private SoundManager soundManager;
 
@@ -43,11 +41,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         thread = new GameThread(getHolder(), this);
 
         // 338.49997,-54.496044
-        player = new Player(new Rect(0, 0, 96, 96), Color.rgb(255, 255, 0));
-        player.setPos(338, -54);
+        Constants.PLAYER = new Player(new Rect(0, 0, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE), Color.rgb(255, 255, 0));
+        Constants.PLAYER.setPos(338, -54);
         camera = new Camera();
 
-        world = new World(camera);
+        Constants.WORLD = new World(camera);
         joyStick = new JoyStick(0, 0, 256);
 
         soundManager = new SoundManager();
@@ -107,9 +105,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         return true;
     }
 
-    public void update() {
-        player.move(joyStick.getDirection());
-        camera.setPos(player.getX() - (Constants.SCREEN_WIDTH / 2), player.getY() - (Constants.SCREEN_HEIGHT / 2));
+    public void update(float delta) {
+        Constants.PLAYER.move(joyStick.getDirection(), delta);
+        Constants.PLAYER.update(delta);
+        camera.setPos(Constants.PLAYER.getX() - (Constants.SCREEN_WIDTH / 2), Constants.PLAYER.getY() - (Constants.SCREEN_HEIGHT / 2));
+
         //System.out.println(player.getLocation() + " :: (" + (camera.getX() + (Constants.SCREEN_WIDTH / 2)) + ", " + (camera.getY() + Constants.SCREEN_HEIGHT / 2) + ")");
     }
 
@@ -119,9 +119,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         canvas.drawColor(Color.BLACK);
 
-        world.draw(canvas);
+        Constants.WORLD.draw(canvas);
 
-        player.draw(canvas);
+        Constants.PLAYER.draw(canvas);
 
         if (currentState.equals(State.PLAYING)) {
             joyStick.draw(canvas);
