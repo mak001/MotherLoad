@@ -1,10 +1,8 @@
 package com.mak001.motherload.game.player;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.provider.Settings;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.game.Constants;
@@ -12,7 +10,8 @@ import com.mak001.motherload.game.helpers.Collidable;
 import com.mak001.motherload.game.helpers.Renderable;
 import com.mak001.motherload.game.helpers.Updatable;
 import com.mak001.motherload.game.world.Tile;
-import com.mak001.motherload.game.world.TileType;
+
+import java.util.ArrayList;
 
 /**
  * Created by Matthew on 2/21/2017.
@@ -39,9 +38,9 @@ public class Player extends Collidable implements Renderable, Updatable {
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(color);
-        canvas.drawRect(collider, paint);
+        // canvas.drawRect(collider, paint);
 
-        paint.setColor(Color.CYAN);
+        // paint.setColor(Color.CYAN);
         canvas.drawRect(image, paint);
     }
 
@@ -52,7 +51,8 @@ public class Player extends Collidable implements Renderable, Updatable {
         boolean collideX = false;
         boolean collideY = false;
 
-        velocity.y -= (Constants.GRAVITY.getY() * Constants.MOVE_SPEED * delta);
+        // velocity.y -= (Constants.GRAVITY.getY() * Constants.MOVE_SPEED * delta);
+
 
         if (Constants.MAX_FALL_SPEED < velocity.y) {
             velocity.y = Constants.MAX_FALL_SPEED;
@@ -60,13 +60,31 @@ public class Player extends Collidable implements Renderable, Updatable {
             velocity.y = -Constants.MAX_FALL_SPEED;
         }
 
-        // location.x = location.x + velocity.x * Constants.MOVE_SPEED * delta;
-        // location.y = location.y + velocity.y * Constants.MOVE_SPEED * delta;
+        location.x = location.x + velocity.x * Constants.MOVE_SPEED * delta;
+        location.y = location.y + velocity.y * Constants.MOVE_SPEED * delta;
 
+        ArrayList<Tile> tiles = Constants.WORLD.getTilesAround(location, 1);
+
+        int sX = -1;
+        for (Tile t : tiles) {
+            sX = getColidingSide(t);
+            if (sX == 1 || sX == 3) {
+                collideX = true;
+            }
+        }
 
         if (collideX) {
             location.x = oldLoc.getX();
             velocity.x = 0;
+        }
+
+        int sY = -1;
+        for (Tile t : tiles) {
+            System.out.println(isColliding(t) + " :: " + t);
+            sY = getColidingSide(t);
+            if (sY == 1 || sY == 3) {
+                collideY = true;
+            }
         }
 
         if (collideY) {
@@ -75,7 +93,7 @@ public class Player extends Collidable implements Renderable, Updatable {
         }
 
 
-        // System.out.println(location + " :: " + collideX + ", " + collideY);
+        System.out.println(location + " :: " + sX + ", " + sY);
 
     }
 

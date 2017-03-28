@@ -58,10 +58,38 @@ public abstract class Collidable extends Locatable {
             return false;
 
         Rect other = collidable.getCollider();
-        return location.getX() < other.left + other.width() &&
-                location.getX() + collider.width() > other.left &&
-                collider.bottom < other.bottom + other.height() &&
-                collider.bottom + collider.height() > other.bottom;
+
+        return Rect.intersects(collider, other);
+    }
+
+    /**
+     * -1 = none
+     * 0  = top
+     * 1  = right
+     * 2  = bottom
+     * 3  = left
+     *
+     * @param collidable
+     * @return
+     */
+    public int getColidingSide(Collidable collidable) {
+        if (!isColliding(collidable)) {
+            return -1;
+        }
+
+        Rect other = collidable.getCollider();
+
+        if (collider.left <= other.right) {
+            return 3;
+        } else if (collider.right <= other.left) {
+            return 1;
+        } else if (collider.top <= other.bottom) {
+            return 0;
+        } else if (collider.bottom <= other.top) {
+            return 2;
+        }
+
+        return -1;
     }
 
 }

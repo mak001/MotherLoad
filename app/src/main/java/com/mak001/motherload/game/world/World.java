@@ -1,13 +1,15 @@
 package com.mak001.motherload.game.world;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.game.Camera;
 import com.mak001.motherload.game.Constants;
 import com.mak001.motherload.game.Methods;
 import com.mak001.motherload.game.helpers.Renderable;
+
+import java.util.ArrayList;
 
 /**
  * Created by Matthew on 2/25/2017.
@@ -33,12 +35,13 @@ public class World implements Renderable {
         for (int x = 0; x < tiles.length; x++) {
             for (int y = 0; y < lastGeneratedLayer; y++) {
 
-                if (Methods.between(Math.floor(camera.getX() - Constants.TILE_SIZE), Math.ceil(camera.getX() + Constants.SCREEN_WIDTH + Constants.TILE_SIZE), x * Constants.TILE_SIZE) &&
-                        Methods.between(Math.floor(camera.getY() - Constants.TILE_SIZE), Math.ceil(camera.getY() + Constants.SCREEN_HEIGHT + Constants.TILE_SIZE), y * Constants.TILE_SIZE)) {
+                Tile t = tiles[x][y];
 
-                    Bitmap image = tiles[x][y].getImage();
-                    if (image != null) {
-                        canvas.drawBitmap(image, (x * Constants.TILE_SIZE) - camera.getX(), (y * Constants.TILE_SIZE) - camera.getY(), paint);
+                if (Methods.between(Math.floor(camera.getX() - Constants.TILE_SIZE), Math.ceil(camera.getX() + Constants.SCREEN_WIDTH + Constants.TILE_SIZE), t.getX()) &&
+                        Methods.between(Math.floor(camera.getY() - Constants.TILE_SIZE), Math.ceil(camera.getY() + Constants.SCREEN_HEIGHT + Constants.TILE_SIZE), t.getY())) {
+
+                    if (t.getImage() != null) {
+                        canvas.drawBitmap(t.getImage(), t.getX() - camera.getX(), t.getY() - camera.getY(), paint);
                     }
                 }
 
@@ -78,13 +81,25 @@ public class World implements Renderable {
         return tiles;
     }
 
+    public ArrayList<Tile> getTilesAround(Vector2 vec, int range) {
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+        int realX = (int) (vec.getX() / Constants.TILE_SIZE);
+        int realY = (int) (vec.getY() / Constants.TILE_SIZE);
+        for (int i = realX - range; i <= realX + range; i++) {
+            for (int j = realY - range; j <= realY + range; j++) {
+                tiles.add(getTileAt(i, j));
+            }
+        }
+        return tiles;
+    }
+
     public void generate(int height) {
         // TODO - generate TileTypes within their given range
         for (int x = 0; x < tiles.length; x++) {
             for (int y = lastGeneratedLayer; y < lastGeneratedLayer + height; y++) {
 
                 // set the default TileType
-                tiles[x][y] = new Tile(x, y, TileType.getDefault());
+                tiles[x][y] = new Tile(x * Constants.TILE_SIZE, y * Constants.TILE_SIZE, TileType.getDefault());
 
                 float chance = (float) Math.random();
 
