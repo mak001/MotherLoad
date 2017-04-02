@@ -1,6 +1,5 @@
 package com.mak001.motherload.game.world;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -42,7 +41,6 @@ public class World implements Renderable {
                     if (Methods.between(Math.floor(camera.getX() - Constants.TILE_SIZE), Math.ceil(camera.getX() + Constants.SCREEN_WIDTH + Constants.TILE_SIZE), t.getX()) &&
                             Methods.between(Math.floor(camera.getY() - Constants.TILE_SIZE), Math.ceil(camera.getY() + Constants.SCREEN_HEIGHT + Constants.TILE_SIZE), t.getY())) {
 
-
                         Bitmap image = t.getImage();
                         if (image != null) {
                             canvas.drawBitmap(image, t.getX() - camera.getX(), t.getY() - camera.getY(), paint);
@@ -59,6 +57,18 @@ public class World implements Renderable {
             return tiles[x][y];
         }
         return null;
+    }
+
+    public ArrayList<Tile> getTilesAround(Vector2 vec, int range) {
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+        int realX = (int) (vec.getX() / Constants.TILE_SIZE);
+        int realY = (int) (vec.getY() / Constants.TILE_SIZE);
+        for (int i = realX - range; i <= realX + range; i++) {
+            for (int j = realY - range; j <= realY + range; j++) {
+                tiles.add(getTileAt(i, j));
+            }
+        }
+        return tiles;
     }
 
     public ArrayList<Tile> getTilesAround(Vector2 vec, int range) {

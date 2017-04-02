@@ -3,7 +3,6 @@ package com.mak001.motherload.game.player;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -14,6 +13,11 @@ import com.mak001.motherload.game.Constants;
 import com.mak001.motherload.game.helpers.Collidable;
 import com.mak001.motherload.game.helpers.Renderable;
 import com.mak001.motherload.game.helpers.Updatable;
+
+import com.mak001.motherload.game.world.Tile;
+
+import java.util.ArrayList;
+
 
 /**
  * Created by Matthew on 2/21/2017.
@@ -59,9 +63,19 @@ public class Player extends Collidable implements Renderable, Updatable {
         setX(location.x + velocity.x * Constants.MOVE_SPEED * delta);
         setY(location.y + velocity.y * Constants.MOVE_SPEED * delta);
 
+
         if (collideX) {
             setX(oldLoc.getX());
             velocity.x = 0;
+        }
+
+        int sY = -1;
+        for (Tile t : tiles) {
+            System.out.println(isColliding(t) + " :: " + t);
+            sY = getColidingSide(t);
+            if (sY == 1 || sY == 3) {
+                collideY = true;
+            }
         }
 
         if (collideY) {
@@ -70,7 +84,7 @@ public class Player extends Collidable implements Renderable, Updatable {
         }
 
 
-        // System.out.println(location + " :: " + collideX + ", " + collideY);
+        System.out.println(location + " :: " + sX + ", " + sY);
 
     }
 
