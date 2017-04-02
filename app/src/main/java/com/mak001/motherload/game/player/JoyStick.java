@@ -50,8 +50,7 @@ public class JoyStick extends Control {
     }
 
     @Override
-    public void draw(Canvas canvas) {
-        Paint paint = new Paint();
+    public void draw(Canvas canvas, Paint paint) {
         canvas.drawBitmap(image, x, y, paint);
     }
 

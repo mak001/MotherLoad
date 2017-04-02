@@ -24,6 +24,10 @@ public class Tile extends Collidable {
 
     public void setTileType(TileType type) {
         this.type = type;
+
+        if (type.equals(TileType.AIR)) {
+            canCollide = false;
+        }
     }
 
     public TileType getTileType() {

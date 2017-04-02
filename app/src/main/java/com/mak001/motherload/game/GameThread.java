@@ -74,7 +74,7 @@ public class GameThread extends Thread {
 
                 frameCount = 0;
                 totalTime = 0;
-                //System.out.println(averageFPS);
+                System.out.println(averageFPS);
             }
 
             lastFrame = (System.nanoTime() - startTime) / 1000000000f;
