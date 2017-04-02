@@ -32,22 +32,13 @@ public class Player extends Collidable implements Renderable, Updatable {
 
         image = BitmapFactory.decodeResource(Constants.RESOURCES, R.drawable.player);
         image = Bitmap.createScaledBitmap(image, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE, false);
-        // setPos((Constants.SCREEN_WIDTH / 2) - (rectangle.width() / 2), (Constants.SCREEN_HEIGHT / 2) - (rectangle.height() / 2));
-        // image.offsetTo((Constants.SCREEN_WIDTH / 2) - (image.width() / 2), (Constants.SCREEN_HEIGHT / 2) - (image.height() / 2));
+
 
     }
 
     @Override
-    public void draw(Canvas canvas) {
-        Paint paint = new Paint();
-
-        //canvas.drawBitmap(image, (getLocation().getX() + (Constants.PLAYER_SIZE / 2)) +  (camera.getX() + (Constants.SCREEN_WIDTH / 2)), (getLocation().getY() + (Constants.PLAYER_SIZE / 2)) + (camera.getY() + (Constants.SCREEN_HEIGHT)), paint);
-
+    public void draw(Canvas canvas, Paint paint) {
         canvas.drawBitmap(image, (Constants.SCREEN_WIDTH / 2) - (Constants.PLAYER_SIZE / 2), (Constants.SCREEN_HEIGHT / 2) - (Constants.PLAYER_SIZE / 2), paint);
-
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.YELLOW);
-        canvas.drawRect(collider, paint);
     }
 
     @Override

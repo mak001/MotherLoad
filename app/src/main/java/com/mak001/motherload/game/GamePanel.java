@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -119,13 +120,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
+        Paint paint = new Paint();
+
         canvas.drawColor(Color.BLACK);
 
-        Constants.WORLD.draw(canvas);
-        Constants.PLAYER.draw(canvas);
+        Constants.WORLD.draw(canvas, paint);
+        Constants.PLAYER.draw(canvas, paint);
 
         if (currentState.equals(State.PLAYING)) {
-            joyStick.draw(canvas);
+            joyStick.draw(canvas, paint);
         }
     }
 

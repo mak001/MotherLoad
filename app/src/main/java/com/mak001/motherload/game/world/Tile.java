@@ -54,4 +54,9 @@ public class Tile extends Collidable {
         return type.getImage(imageID);
     }
 
+    @Override
+    public String toString() {
+        return location.getX() + ", " + location.getY() + " :: " + type;
+    }
+
 }

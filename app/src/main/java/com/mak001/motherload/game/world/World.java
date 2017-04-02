@@ -5,10 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.game.Camera;
 import com.mak001.motherload.game.Constants;
 import com.mak001.motherload.game.Methods;
 import com.mak001.motherload.game.helpers.Renderable;
+
+import java.util.ArrayList;
 
 /**
  * Created by Matthew on 2/25/2017.
@@ -24,31 +27,25 @@ public class World implements Renderable {
     public World(Camera camera) {
         this.camera = camera;
 
-        tiles = new Tile[50][25];
-        generate(tiles.length);
+        tiles = new Tile[50][500];
+        generate(20);
     }
 
     @Override
-    public void draw(Canvas canvas) {
-        Paint paint = new Paint();
+    public void draw(Canvas canvas, Paint paint) {
+
         for (int x = 0; x < tiles.length; x++) {
             for (int y = 0; y < getLower(lastGeneratedLayer, tiles[0].length); y++) {
+                if (tiles[x][y] != null) {
+                    Tile t = tiles[x][y];
 
-                if (Methods.between(Math.floor(camera.getX() - Constants.TILE_SIZE), Math.ceil(camera.getX() + Constants.SCREEN_WIDTH + Constants.TILE_SIZE), x * Constants.TILE_SIZE) &&
-                        Methods.between(Math.floor(camera.getY() - Constants.TILE_SIZE), Math.ceil(camera.getY() + Constants.SCREEN_HEIGHT + Constants.TILE_SIZE), y * Constants.TILE_SIZE)) {
+                    if (Methods.between(Math.floor(camera.getX() - Constants.TILE_SIZE), Math.ceil(camera.getX() + Constants.SCREEN_WIDTH + Constants.TILE_SIZE), t.getX()) &&
+                            Methods.between(Math.floor(camera.getY() - Constants.TILE_SIZE), Math.ceil(camera.getY() + Constants.SCREEN_HEIGHT + Constants.TILE_SIZE), t.getY())) {
 
-                    if (tiles[x][y] != null) {
-                        Tile t = tiles[x][y];
+
                         Bitmap image = t.getImage();
                         if (image != null) {
                             canvas.drawBitmap(image, t.getX() - camera.getX(), t.getY() - camera.getY(), paint);
-                        }
-
-                        if (tiles[x][y].canCollide()) {
-                            paint.setStyle(Paint.Style.STROKE);
-                            paint.setColor(Color.RED);
-                            canvas.drawRect(tiles[x][y].getCollider(), paint);
-                            // System.out.println("Drew tiles at: " + x + ", " + y + " :: " + tiles[x][y].getCollider());
                         }
                     }
                 }
@@ -64,28 +61,15 @@ public class World implements Renderable {
         return null;
     }
 
-    public Tile[][] getTilesAround(int x, int y, int range) {
-
-        x /= Constants.TILE_SIZE;
-        y /= Constants.TILE_SIZE;
-
-        Tile[][] tiles = new Tile[range + 30][range + 30];
-        int halfRange = range / 2;
-        int sX = 0;
-        int sY = 0;
-
-        for (int i = x - halfRange; i < x + halfRange; i++) {
-            for (int j = y - halfRange; j < y + halfRange; j++) {
-                if (i != x && j != y) { //ignore the center tile
-                    tiles[sX][sY] = getTileAt(i, j);
-                } else {
-                    tiles[sX][sY] = null;
-                }
-                sY++;
+    public ArrayList<Tile> getTilesAround(Vector2 vec, int range) {
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+        int realX = (int) (vec.getX() / Constants.TILE_SIZE);
+        int realY = (int) (vec.getY() / Constants.TILE_SIZE);
+        for (int i = realX - range; i <= realX + range; i++) {
+            for (int j = realY - range; j <= realY + range; j++) {
+                tiles.add(getTileAt(i, j));
             }
-            sX++;
         }
-
         return tiles;
     }
 
