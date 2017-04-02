@@ -21,7 +21,6 @@ public class Motherload extends Activity {
 
         panel = new GamePanel(this);
         setContentView(panel);
-
     }
 
     @Override

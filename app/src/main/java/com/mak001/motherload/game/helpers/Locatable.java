@@ -32,7 +32,7 @@ public abstract class Locatable {
     }
 
     public Vector2 getLocation() {
-        return location.cpy();
+        return location;
     }
 
     public float getX() {
