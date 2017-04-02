@@ -2,6 +2,7 @@ package com.mak001.motherload.game.world;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.mak001.motherload.game.Camera;
@@ -23,7 +24,7 @@ public class World implements Renderable {
     public World(Camera camera) {
         this.camera = camera;
 
-        tiles = new Tile[25][500];
+        tiles = new Tile[50][25];
         generate(tiles.length);
     }
 
@@ -31,14 +32,24 @@ public class World implements Renderable {
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
         for (int x = 0; x < tiles.length; x++) {
-            for (int y = 0; y < lastGeneratedLayer; y++) {
+            for (int y = 0; y < getLower(lastGeneratedLayer, tiles[0].length); y++) {
 
                 if (Methods.between(Math.floor(camera.getX() - Constants.TILE_SIZE), Math.ceil(camera.getX() + Constants.SCREEN_WIDTH + Constants.TILE_SIZE), x * Constants.TILE_SIZE) &&
                         Methods.between(Math.floor(camera.getY() - Constants.TILE_SIZE), Math.ceil(camera.getY() + Constants.SCREEN_HEIGHT + Constants.TILE_SIZE), y * Constants.TILE_SIZE)) {
 
-                    Bitmap image = tiles[x][y].getImage();
-                    if (image != null) {
-                        canvas.drawBitmap(image, (x * Constants.TILE_SIZE) - camera.getX(), (y * Constants.TILE_SIZE) - camera.getY(), paint);
+                    if (tiles[x][y] != null) {
+                        Tile t = tiles[x][y];
+                        Bitmap image = t.getImage();
+                        if (image != null) {
+                            canvas.drawBitmap(image, t.getX() - camera.getX(), t.getY() - camera.getY(), paint);
+                        }
+
+                        if (tiles[x][y].canCollide()) {
+                            paint.setStyle(Paint.Style.STROKE);
+                            paint.setColor(Color.RED);
+                            canvas.drawRect(tiles[x][y].getCollider(), paint);
+                            // System.out.println("Drew tiles at: " + x + ", " + y + " :: " + tiles[x][y].getCollider());
+                        }
                     }
                 }
 
@@ -81,10 +92,10 @@ public class World implements Renderable {
     public void generate(int height) {
         // TODO - generate TileTypes within their given range
         for (int x = 0; x < tiles.length; x++) {
-            for (int y = lastGeneratedLayer; y < lastGeneratedLayer + height; y++) {
+            for (int y = lastGeneratedLayer; y < getLower(lastGeneratedLayer + height, tiles[0].length); y++) {
 
                 // set the default TileType
-                tiles[x][y] = new Tile(x, y, TileType.getDefault());
+                tiles[x][y] = new Tile(x * Constants.TILE_SIZE, y * Constants.TILE_SIZE, TileType.getDefault());
 
                 float chance = (float) Math.random();
 
@@ -103,5 +114,12 @@ public class World implements Renderable {
         }
 
         lastGeneratedLayer += height;
+    }
+
+    public int getLower(int a, int b) {
+        if (a <= b) {
+            return a;
+        }
+        return b;
     }
 }

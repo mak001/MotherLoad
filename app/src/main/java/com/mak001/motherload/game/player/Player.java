@@ -1,48 +1,53 @@
 package com.mak001.motherload.game.player;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.provider.Settings;
 
 import com.badlogic.gdx.math.Vector2;
+import com.mak001.motherload.R;
+import com.mak001.motherload.game.Camera;
 import com.mak001.motherload.game.Constants;
 import com.mak001.motherload.game.helpers.Collidable;
 import com.mak001.motherload.game.helpers.Renderable;
 import com.mak001.motherload.game.helpers.Updatable;
-import com.mak001.motherload.game.world.Tile;
-import com.mak001.motherload.game.world.TileType;
 
 /**
  * Created by Matthew on 2/21/2017.
  */
 public class Player extends Collidable implements Renderable, Updatable {
 
-    private int color;
-    private Rect image;
+    private Bitmap image;
     private Vector2 velocity;
+    private Camera camera;
 
 
-    public Player(Rect rectangle, int color) {
+    public Player(Rect rectangle, Camera camera) {
         super(rectangle.left, rectangle.top);
-        this.color = color;
+        this.camera = camera;
         this.velocity = Vector2.Zero();
 
-        image = rectangle;
-        setPos((Constants.SCREEN_WIDTH / 2) - (rectangle.width() / 2), (Constants.SCREEN_HEIGHT / 2) - (rectangle.height() / 2));
-        image.offsetTo((Constants.SCREEN_WIDTH / 2) - (image.width() / 2), (Constants.SCREEN_HEIGHT / 2) - (image.height() / 2));
+        image = BitmapFactory.decodeResource(Constants.RESOURCES, R.drawable.player);
+        image = Bitmap.createScaledBitmap(image, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE, false);
+        // setPos((Constants.SCREEN_WIDTH / 2) - (rectangle.width() / 2), (Constants.SCREEN_HEIGHT / 2) - (rectangle.height() / 2));
+        // image.offsetTo((Constants.SCREEN_WIDTH / 2) - (image.width() / 2), (Constants.SCREEN_HEIGHT / 2) - (image.height() / 2));
 
     }
 
     @Override
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
-        paint.setColor(color);
-        canvas.drawRect(collider, paint);
 
-        paint.setColor(Color.CYAN);
-        canvas.drawRect(image, paint);
+        //canvas.drawBitmap(image, (getLocation().getX() + (Constants.PLAYER_SIZE / 2)) +  (camera.getX() + (Constants.SCREEN_WIDTH / 2)), (getLocation().getY() + (Constants.PLAYER_SIZE / 2)) + (camera.getY() + (Constants.SCREEN_HEIGHT)), paint);
+
+        canvas.drawBitmap(image, (Constants.SCREEN_WIDTH / 2) - (Constants.PLAYER_SIZE / 2), (Constants.SCREEN_HEIGHT / 2) - (Constants.PLAYER_SIZE / 2), paint);
+
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.YELLOW);
+        canvas.drawRect(collider, paint);
     }
 
     @Override
@@ -52,7 +57,7 @@ public class Player extends Collidable implements Renderable, Updatable {
         boolean collideX = false;
         boolean collideY = false;
 
-        velocity.y -= (Constants.GRAVITY.getY() * Constants.MOVE_SPEED * delta);
+        // velocity.y -= (Constants.GRAVITY.getY() * Constants.MOVE_SPEED * delta);
 
         if (Constants.MAX_FALL_SPEED < velocity.y) {
             velocity.y = Constants.MAX_FALL_SPEED;
@@ -60,17 +65,16 @@ public class Player extends Collidable implements Renderable, Updatable {
             velocity.y = -Constants.MAX_FALL_SPEED;
         }
 
-        // location.x = location.x + velocity.x * Constants.MOVE_SPEED * delta;
-        // location.y = location.y + velocity.y * Constants.MOVE_SPEED * delta;
-
+        setX(location.x + velocity.x * Constants.MOVE_SPEED * delta);
+        setY(location.y + velocity.y * Constants.MOVE_SPEED * delta);
 
         if (collideX) {
-            location.x = oldLoc.getX();
+            setX(oldLoc.getX());
             velocity.x = 0;
         }
 
         if (collideY) {
-            location.y = oldLoc.getY();
+            setY(oldLoc.getY());
             velocity.y = 0;
         }
 
@@ -85,8 +89,7 @@ public class Player extends Collidable implements Renderable, Updatable {
 
     public void move(Vector2 vec, float delta) {
 
-        velocity.add(vec.cpy().scl(Constants.MOVE_SPEED * delta));
-
+        velocity.set(vec.cpy().scl(Constants.MOVE_SPEED * delta));
         /*
         rectangle.offsetTo(
                 (int) (location.x - (rectangle.width() / 2)),

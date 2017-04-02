@@ -11,7 +11,7 @@ import com.mak001.motherload.game.Constants;
 public abstract class Collidable extends Locatable {
 
     protected Rect collider;
-    protected boolean canCollide;
+    protected boolean canCollide = true;
 
     public Collidable(int x, int y) {
         this(x, y, Constants.TILE_SIZE);
@@ -23,7 +23,7 @@ public abstract class Collidable extends Locatable {
 
     public Collidable(int x, int y, int width, int height) {
         super(x, y);
-        collider = new Rect(x, y, width, height);
+        collider = new Rect(x, y, x + width, y + height);
     }
 
     @Override
