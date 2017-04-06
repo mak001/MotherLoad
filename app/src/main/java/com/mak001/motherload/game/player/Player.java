@@ -63,6 +63,16 @@ public class Player extends Collidable implements Renderable, Updatable {
         setX(location.x + velocity.x * Constants.MOVE_SPEED * delta);
         setY(location.y + velocity.y * Constants.MOVE_SPEED * delta);
 
+        ArrayList<Tile> tiles = Constants.WORLD.getTilesAround(location, 1);
+
+        int sX = -1;
+        for (Tile t : tiles) {
+            System.out.println(isColliding(t) + " :: " + t);
+            sX = getColidingSide(t);
+            if (sX == 1 || sX == 3) {
+                collideY = true;
+            }
+        }
 
         if (collideX) {
             setX(oldLoc.getX());
