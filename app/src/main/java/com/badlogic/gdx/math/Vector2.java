@@ -168,6 +168,11 @@ public class Vector2 implements Serializable {
         return x * ox + y * oy;
     }
 
+    public Vector2 div(float scalar) {
+        x /= scalar;
+        y /= scalar;
+        return this;
+    }
 
     public Vector2 scl(float scalar) {
         x *= scalar;

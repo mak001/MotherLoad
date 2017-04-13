@@ -26,12 +26,9 @@ public class Player extends Collidable implements Renderable, Updatable {
 
     private Bitmap image;
     private Vector2 velocity;
-    private Camera camera;
 
-
-    public Player(Rect rectangle, Camera camera) {
-        super(rectangle.left, rectangle.top);
-        this.camera = camera;
+    public Player(int x, int y, int size) {
+        super(x, y, Constants.PLAYER_SIZE);
         this.velocity = Vector2.Zero();
 
         image = BitmapFactory.decodeResource(Constants.RESOURCES, R.drawable.player);
@@ -48,11 +45,11 @@ public class Player extends Collidable implements Renderable, Updatable {
     @Override
     public void update(float delta) {
         // TODO - https://www.youtube.com/watch?v=qwuPiaFU37w&t=1250
-        Vector2 oldLoc = getLocation();
+        Vector2 oldLoc = getLocation().cpy();
         boolean collideX = false;
         boolean collideY = false;
 
-        // velocity.y -= (Constants.GRAVITY.getY() * Constants.MOVE_SPEED * delta);
+        velocity.y -= (Constants.GRAVITY.getY() * Constants.MOVE_SPEED * delta);
 
         if (Constants.MAX_FALL_SPEED < velocity.y) {
             velocity.y = Constants.MAX_FALL_SPEED;
@@ -65,26 +62,11 @@ public class Player extends Collidable implements Renderable, Updatable {
 
         ArrayList<Tile> tiles = Constants.WORLD.getTilesAround(location, 1);
 
-        int sX = -1;
-        for (Tile t : tiles) {
-            System.out.println(isColliding(t) + " :: " + t);
-            sX = getColidingSide(t);
-            if (sX == 1 || sX == 3) {
+        for (int i = 0; i < tiles.size(); i++) {
+            int sY = getColidingSide(tiles.get(i), 1);
+            if (sY == 0 || sY == 2) {
                 collideY = true;
-            }
-        }
-
-        if (collideX) {
-            setX(oldLoc.getX());
-            velocity.x = 0;
-        }
-
-        int sY = -1;
-        for (Tile t : tiles) {
-            System.out.println(isColliding(t) + " :: " + t);
-            sY = getColidingSide(t);
-            if (sY == 1 || sY == 3) {
-                collideY = true;
+                break;
             }
         }
 
@@ -93,13 +75,19 @@ public class Player extends Collidable implements Renderable, Updatable {
             velocity.y = 0;
         }
 
+        for (int i = 0; i < tiles.size(); i++) {
+            int sX = getColidingSide(tiles.get(i), 0);
+            if (sX == 1 || sX == 3) {
+                collideX = true;
+                break;
+            }
+        }
 
-        System.out.println(location + " :: " + sX + ", " + sY);
+        if (collideX) {
+            setX(oldLoc.getX());
+            velocity.x = 0;
+        }
 
-    }
-
-    private boolean isCollision(float x, float y) {
-        return Constants.WORLD.getTileAt((int) (x / Constants.TILE_SIZE), (int) (y / Constants.TILE_SIZE)).getTileType().ordinal() != 0;
     }
 
     public void move(Vector2 vec, float delta) {

@@ -14,12 +14,12 @@ public class Constants {
 
     // used for both width and height 96 = (96 X 96)
     public static final int TILE_SIZE = 96;
-    public static final int PLAYER_SIZE = 96;
+    public static final int PLAYER_SIZE = 88;
 
     // move sped multiplier for player
     public static final float MOVE_SPEED = 100;
 
-    public static final Vector2 GRAVITY = new Vector2(0, -9.8f);
+    public static final Vector2 GRAVITY = new Vector2(0, -2.5f);
     public static final int MAX_FALL_SPEED = (int) (9.8 * TILE_SIZE);
 
     public static Resources RESOURCES;

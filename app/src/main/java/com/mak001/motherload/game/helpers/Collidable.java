@@ -72,24 +72,29 @@ public abstract class Collidable extends Locatable {
      * @param collidable
      * @return
      */
-    public int getColidingSide(Collidable collidable) {
+    public int getColidingSide(Collidable collidable, int dir) {
         if (!isColliding(collidable)) {
             return -1;
         }
 
         Rect other = collidable.getCollider();
 
-        if (collider.left <= other.right) {
-            return 3;
-        } else if (collider.right <= other.left) {
-            return 1;
-        } else if (collider.top <= other.bottom) {
-            return 0;
-        } else if (collider.bottom <= other.top) {
-            return 2;
+        if (dir == 0) {
+            if (collider.left < other.right) {
+                return 3;
+            } else if (collider.right < other.left) {
+                return 1;
+            }
+        }
+        if (dir == 1) {
+            if (collider.top < other.bottom) {
+                return 0;
+            } else if (collider.bottom < other.top) {
+                return 2;
+            }
         }
 
-        return -1;
+        return -2;
     }
 
 }

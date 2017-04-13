@@ -54,7 +54,7 @@ public class World implements Renderable {
     }
 
     public Tile getTileAt(int x, int y) {
-        if (0 < x && x < tiles.length && 0 < y && y < tiles[0].length) {
+        if (0 <= x && x < tiles.length && 0 <= y && y < tiles[0].length) {
             return tiles[x][y];
         }
         return null;
@@ -62,11 +62,15 @@ public class World implements Renderable {
 
     public ArrayList<Tile> getTilesAround(Vector2 vec, int range) {
         ArrayList<Tile> tiles = new ArrayList<Tile>();
-        int realX = (int) (vec.getX() / Constants.TILE_SIZE);
-        int realY = (int) (vec.getY() / Constants.TILE_SIZE);
+
+        int realX = Math.round(vec.getX() / Constants.TILE_SIZE);
+        int realY = Math.round(vec.getY() / Constants.TILE_SIZE);
+
         for (int i = realX - range; i <= realX + range; i++) {
             for (int j = realY - range; j <= realY + range; j++) {
-                tiles.add(getTileAt(i, j));
+                Tile t = getTileAt(i, j);
+                if (t != null)
+                    tiles.add(t);
             }
         }
         return tiles;
