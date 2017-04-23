@@ -4,11 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.R;
-import com.mak001.motherload.game.Camera;
 import com.mak001.motherload.game.Constants;
 import com.mak001.motherload.game.helpers.Collidable;
 import com.mak001.motherload.game.helpers.Renderable;
@@ -27,7 +25,7 @@ public class Player extends Collidable implements Renderable, Updatable {
     private Bitmap image;
     private Vector2 velocity;
 
-    public Player(int x, int y, int size) {
+    public Player(int x, int y) {
         super(x, y, Constants.PLAYER_SIZE);
         this.velocity = Vector2.Zero();
 
@@ -49,7 +47,7 @@ public class Player extends Collidable implements Renderable, Updatable {
         boolean collideX = false;
         boolean collideY = false;
 
-        velocity.y -= (Constants.GRAVITY.getY() * Constants.MOVE_SPEED * delta);
+        velocity.y -= (Constants.GRAVITY * delta);
 
         if (Constants.MAX_FALL_SPEED < velocity.y) {
             velocity.y = Constants.MAX_FALL_SPEED;
@@ -57,8 +55,8 @@ public class Player extends Collidable implements Renderable, Updatable {
             velocity.y = -Constants.MAX_FALL_SPEED;
         }
 
-        setX(location.x + velocity.x * Constants.MOVE_SPEED * delta);
-        setY(location.y + velocity.y * Constants.MOVE_SPEED * delta);
+        setX(location.x + velocity.x * Constants.MOVE_SPEED_X * delta);
+        setY(location.y + velocity.y * Constants.MOVE_SPEED_Y * delta);
 
         ArrayList<Tile> tiles = Constants.WORLD.getTilesAround(location, 1);
 
@@ -71,6 +69,7 @@ public class Player extends Collidable implements Renderable, Updatable {
         }
 
         if (collideY) {
+            // todo - move to collision
             setY(oldLoc.getY());
             velocity.y = 0;
         }
@@ -84,6 +83,7 @@ public class Player extends Collidable implements Renderable, Updatable {
         }
 
         if (collideX) {
+            // todo - move to collision
             setX(oldLoc.getX());
             velocity.x = 0;
         }
@@ -91,14 +91,8 @@ public class Player extends Collidable implements Renderable, Updatable {
     }
 
     public void move(Vector2 vec, float delta) {
-
-        velocity.set(vec.cpy().scl(Constants.MOVE_SPEED * delta));
-        /*
-        rectangle.offsetTo(
-                (int) (location.x - (rectangle.width() / 2)),
-                (int) (location.y - (rectangle.height() / 2))
-        );
-        */
-
+        velocity.x = vec.getX() * (Constants.MOVE_SPEED_X * delta);
+        velocity.y = vec.getY() * (Constants.MOVE_SPEED_Y * delta);
+        // velocity.set(vec.cpy().scl(Constants.MOVE_SPEED * delta));
     }
 }

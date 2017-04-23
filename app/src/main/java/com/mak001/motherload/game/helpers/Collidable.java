@@ -69,8 +69,8 @@ public abstract class Collidable extends Locatable {
      * 2  = bottom
      * 3  = left
      *
-     * @param collidable
-     * @return
+     * @param collidable the other collidable to check
+     * @return 0 = bottom, 1 = left, 2 = top, 3 = right
      */
     public int getColidingSide(Collidable collidable, int dir) {
         if (!isColliding(collidable)) {

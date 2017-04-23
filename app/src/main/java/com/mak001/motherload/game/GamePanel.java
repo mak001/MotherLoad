@@ -43,8 +43,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         camera = new Camera();
 
-        Constants.PLAYER = new Player(0, 0, Constants.PLAYER_SIZE);
-        Constants.PLAYER.setPos(Constants.PLAYER_SIZE, -(Constants.PLAYER_SIZE + 1));
+        Constants.PLAYER = new Player(Constants.PLAYER_SIZE, -(Constants.PLAYER_SIZE + 1));
 
         Constants.WORLD = new World(camera);
         joyStick = new JoyStick(0, 0, 256);
