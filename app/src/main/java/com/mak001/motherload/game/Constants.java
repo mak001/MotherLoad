@@ -20,7 +20,7 @@ public class Constants {
     public static final float MOVE_SPEED_X = 200;
     public static final float MOVE_SPEED_Y = 300;
 
-    public static final float GRAVITY = -175f;
+    public static final float GRAVITY = -125f;
     public static final int MAX_FALL_SPEED = (int) (9.8 * TILE_SIZE);
 
     public static Resources RESOURCES;
