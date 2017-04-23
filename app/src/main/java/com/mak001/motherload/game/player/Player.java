@@ -44,8 +44,8 @@ public class Player extends Collidable implements Renderable, Updatable {
     public void update(float delta) {
         // TODO - https://www.youtube.com/watch?v=qwuPiaFU37w&t=1250
         Vector2 oldLoc = getLocation().cpy();
-        boolean collideX = false;
-        boolean collideY = false;
+        Tile collideX = null;
+        Tile collideY = null;
 
         velocity.y -= (Constants.GRAVITY * delta);
 
@@ -63,28 +63,39 @@ public class Player extends Collidable implements Renderable, Updatable {
         for (int i = 0; i < tiles.size(); i++) {
             int sY = getColidingSide(tiles.get(i), 1);
             if (sY == 0 || sY == 2) {
-                collideY = true;
+                collideY = tiles.get(i);
                 break;
             }
         }
 
-        if (collideY) {
+        if (collideY != null) {
             // todo - move to collision
-            setY(oldLoc.getY());
+
+            if (oldLoc.getY() < location.getY()) { // moving up
+                setY(collideY.getY() - Constants.PLAYER_SIZE);
+            } else if (location.getY() < oldLoc.getY()) { // moving down
+                setY(collideY.getY() + Constants.TILE_SIZE);
+            }
+
+
             velocity.y = 0;
         }
 
         for (int i = 0; i < tiles.size(); i++) {
             int sX = getColidingSide(tiles.get(i), 0);
             if (sX == 1 || sX == 3) {
-                collideX = true;
+                collideX = tiles.get(i);
                 break;
             }
         }
 
-        if (collideX) {
+        if (collideX != null) {
             // todo - move to collision
-            setX(oldLoc.getX());
+            if (oldLoc.getX() < location.getX()) { // moving right
+                setX(collideX.getX() - Constants.PLAYER_SIZE);
+            } else if (location.getX() < oldLoc.getX()) { // moving left
+                setX(collideX.getX() + Constants.TILE_SIZE);
+            }
             velocity.x = 0;
         }
 
