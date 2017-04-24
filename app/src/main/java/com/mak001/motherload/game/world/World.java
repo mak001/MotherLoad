@@ -60,11 +60,11 @@ public class World implements Renderable {
         return null;
     }
 
-    public ArrayList<Tile> getTilesAround(Vector2 vec, int range) {
+    public ArrayList<Tile> getTilesAround(float x, float y, int range) {
         ArrayList<Tile> tiles = new ArrayList<Tile>();
 
-        int realX = Math.round(vec.getX() / Constants.TILE_SIZE);
-        int realY = Math.round(vec.getY() / Constants.TILE_SIZE);
+        int realX = Math.round(x / Constants.TILE_SIZE);
+        int realY = Math.round(y / Constants.TILE_SIZE);
 
         for (int i = realX - range; i <= realX + range; i++) {
             for (int j = realY - range; j <= realY + range; j++) {
