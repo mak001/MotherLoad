@@ -2,7 +2,6 @@ package com.mak001.motherload.game;
 
 import android.content.res.Resources;
 
-import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.game.player.Player;
 import com.mak001.motherload.game.world.World;
 
@@ -21,7 +20,7 @@ public class Constants {
     public static final float MOVE_SPEED_Y = 300;
 
     public static final float GRAVITY = -125f;
-    public static final int MAX_FALL_SPEED = (int) (9.8 * TILE_SIZE);
+    public static final int MAX_FALL_SPEED = (int) (MOVE_SPEED_Y * TILE_SIZE);
 
     public static Resources RESOURCES;
     public static GamePanel GAME_PANEL;

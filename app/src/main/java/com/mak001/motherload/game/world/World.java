@@ -2,10 +2,8 @@ package com.mak001.motherload.game.world;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 
-import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.game.Camera;
 import com.mak001.motherload.game.Constants;
 import com.mak001.motherload.game.Methods;
@@ -75,6 +73,32 @@ public class World implements Renderable {
         }
         return tiles;
     }
+
+    public ArrayList<Tile> getTilesBetween(float x1, float x2, float y1, float y2) {
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+
+        if (x1 == x2 && y1 == y2) {
+            return tiles;
+        }
+
+        float minX = Math.min(x1, x2);
+        float maxX = Math.max(x1, x2);
+        float minY = Math.min(y1, y2);
+        float maxY = Math.max(y1, y2);
+
+        int snappedX1 = (int) (minX / Constants.TILE_SIZE);
+        int snappedX2 = (int) (maxX / Constants.TILE_SIZE);
+        int snappedY1 = (int) (minY / Constants.TILE_SIZE);
+        int snappedY2 = (int) (minY / Constants.TILE_SIZE);
+
+
+        int tilesBetweenX = snappedX1 - snappedX2;
+        int tilesBetweenY = snappedY1 - snappedY2;
+
+        return tiles;
+    }
+
+
 
     public void generate(int height) {
         // TODO - generate TileTypes within their given range

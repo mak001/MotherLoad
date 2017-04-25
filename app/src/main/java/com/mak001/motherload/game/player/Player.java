@@ -11,10 +11,8 @@ import com.mak001.motherload.game.Constants;
 import com.mak001.motherload.game.helpers.Locatable;
 import com.mak001.motherload.game.helpers.Renderable;
 import com.mak001.motherload.game.helpers.Updatable;
-
 import com.mak001.motherload.game.world.Tile;
 import com.mak001.motherload.game.world.TileType;
-import com.mak001.motherload.game.world.World;
 
 import java.util.ArrayList;
 
@@ -53,43 +51,54 @@ public class Player extends Locatable implements Renderable, Updatable {
             velocity.y = -Constants.MAX_FALL_SPEED;
         }
 
-        // setX(location.x + velocity.x * Constants.MOVE_SPEED_X * delta);
-        // setY(location.y + velocity.y * Constants.MOVE_SPEED_Y * delta);
-        float newX = location.getX() + velocity.getX() * Constants.MOVE_SPEED_X * delta;
-        float newY = location.getY() + velocity.getY() * Constants.MOVE_SPEED_Y * delta;
+        Vector2 oldLoc = getLocation().cpy();
+        Tile collideX = null;
+        Tile collideY = null;
 
-        ArrayList<Tile> tiles = Constants.WORLD.getTilesAround(newX, newY, 1);
+        velocity.y -= (Constants.GRAVITY * delta);
+
+        if (Constants.MAX_FALL_SPEED < velocity.y) {
+            velocity.y = Constants.MAX_FALL_SPEED;
+        } else if (velocity.y < -Constants.MAX_FALL_SPEED) {
+            velocity.y = -Constants.MAX_FALL_SPEED;
+        }
+
+        setX(location.x + velocity.x * Constants.MOVE_SPEED_X * delta);
+        setY(location.y + velocity.y * Constants.MOVE_SPEED_Y * delta);
+
+        ArrayList<Tile> tiles = Constants.WORLD.getTilesAround(getX(), getY(), 1);
 
         for (int i = 0; i < tiles.size(); i++) {
             Tile t = tiles.get(i);
-
-            if (!t.getTileType().equals(TileType.AIR)) {
-                if (collidesX(t, Constants.TILE_SIZE, newX) && collidesY(t, Constants.TILE_SIZE, newY)) {
-
-                    if (collidesY(t, Constants.TILE_SIZE, newY)) {
-                        if (newY < getY()) { // going up
-                            System.out.println("Collision going up");
-                            newY = (t.getY() + Constants.TILE_SIZE) + 1;
-                        } else if (getY() < newY) { // going down
-                            System.out.println("Collision going down");
-                            newY = (t.getY() - Constants.PLAYER_SIZE) - 1;
-                        }
-                    }
-
-                    if (collidesX(t, Constants.TILE_SIZE, newX)) {
-                        if (getX() < newX) { // going right
-                            System.out.println("Collision going right");
-                            newX = (t.getX() - Constants.PLAYER_SIZE) - 1;
-                        } else if (newX < getX()) { // going left
-                            System.out.println("Collision going left");
-                            newX = (t.getX() + Constants.TILE_SIZE) + 1;
-                        }
-                    }
-                }
+            if (t.getTileType().equals(TileType.AIR)) continue;
+            if (collides(t, Constants.TILE_SIZE)) {
+                collideY = tiles.get(i);
+                break;
             }
         }
 
-        setPos(newX, newY);
+        if (collideY != null) {
+            setY(oldLoc.getY());
+            velocity.y = 0;
+        }
+
+        tiles = Constants.WORLD.getTilesAround(getX(), getY(), 1);
+
+        for (int i = 0; i < tiles.size(); i++) {
+            Tile t = tiles.get(i);
+            if (t.getTileType().equals(TileType.AIR)) continue;
+            if (collides(t, Constants.TILE_SIZE)) {
+                collideX = tiles.get(i);
+                break;
+            }
+        }
+
+        if (collideX != null) {
+            setX(oldLoc.getX());
+            velocity.x = 0;
+        }
+
+
     }
 
     public void move(Vector2 vec, float delta) {
@@ -112,6 +121,10 @@ public class Player extends Locatable implements Renderable, Updatable {
 
     private boolean collidesY(Locatable loc, int size) {
         return collidesY(loc, size, getY());
+    }
+
+    private boolean collides(Locatable loc, int size) {
+        return collidesX(loc, size, getX()) && collidesY(loc, size, getY());
     }
 
 }
