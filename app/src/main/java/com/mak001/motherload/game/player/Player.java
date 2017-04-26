@@ -51,11 +51,11 @@ public class Player extends Locatable implements Renderable, Updatable {
             velocity.y = -Constants.MAX_FALL_SPEED;
         }
 
-        Vector2 oldLoc = getLocation().cpy();
+        // Vector2 oldLoc = getLocation().cpy();
         Tile collideX = null;
         Tile collideY = null;
 
-        velocity.y -= (Constants.GRAVITY * delta);
+        // velocity.y -= (Constants.GRAVITY * delta);
 
         if (Constants.MAX_FALL_SPEED < velocity.y) {
             velocity.y = Constants.MAX_FALL_SPEED;
@@ -63,48 +63,76 @@ public class Player extends Locatable implements Renderable, Updatable {
             velocity.y = -Constants.MAX_FALL_SPEED;
         }
 
-        setX(location.x + velocity.x * Constants.MOVE_SPEED_X * delta);
-        setY(location.y + velocity.y * Constants.MOVE_SPEED_Y * delta);
+        // setX(location.x + velocity.x * Constants.MOVE_SPEED_X * delta);
+        // setY(location.y + velocity.y * Constants.MOVE_SPEED_Y * delta);
 
-        ArrayList<Tile> tiles = Constants.WORLD.getTilesAround(getX(), getY(), 1);
+        float newX = location.x + velocity.x * Constants.MOVE_SPEED_X * delta;
+        float newY = location.y + velocity.y * Constants.MOVE_SPEED_Y * delta;
+
+        ArrayList<Tile> tiles = Constants.WORLD.getTilesBetween(getX(), getY(), newX, newY);
 
         for (int i = 0; i < tiles.size(); i++) {
             Tile t = tiles.get(i);
             if (t.getTileType().equals(TileType.AIR)) continue;
             if (collides(t, Constants.TILE_SIZE)) {
-                collideY = tiles.get(i);
-                break;
+                if (collideY == null) {
+                    collideY = t;
+                } else {
+                    if (closer(t, collideY)) collideY = t;
+                }
             }
         }
 
         if (collideY != null) {
-            setY(oldLoc.getY());
+            if (getY() < newY) { // moving down
+                setY(collideY.getY() + Constants.TILE_SIZE);
+                System.out.println("Moving down");
+
+            } else { // moving up
+                setY(collideY.getY() - Constants.PLAYER_SIZE);
+                System.out.println("Moving up");
+            }
             velocity.y = 0;
+        } else {
+            setY(newY);
         }
 
-        tiles = Constants.WORLD.getTilesAround(getX(), getY(), 1);
+        setY(newY);
 
         for (int i = 0; i < tiles.size(); i++) {
             Tile t = tiles.get(i);
             if (t.getTileType().equals(TileType.AIR)) continue;
             if (collides(t, Constants.TILE_SIZE)) {
-                collideX = tiles.get(i);
-                break;
+                if (collideX == null) {
+                    collideX = t;
+                } else {
+                    if (closer(t, collideX)) collideX = t;
+                }
             }
         }
 
         if (collideX != null) {
-            setX(oldLoc.getX());
+            if (getX() < newX) { // moving right
+                setX(collideX.getX() - Constants.PLAYER_SIZE);
+                System.out.println("Moving right");
+
+            } else { // moving left
+                setX(collideX.getX() + Constants.TILE_SIZE);
+                System.out.println("Moving left");
+
+            }
             velocity.x = 0;
+        } else {
+            setX(newX);
         }
 
+        setX(newX);
 
     }
 
     public void move(Vector2 vec, float delta) {
         velocity.x = vec.getX() * (Constants.MOVE_SPEED_X * delta);
         velocity.y = vec.getY() * (Constants.MOVE_SPEED_Y * delta);
-        // velocity.set(vec.cpy().scl(Constants.MOVE_SPEED * delta));
     }
 
     private boolean collidesX(Locatable loc, int size, float x) {
@@ -115,16 +143,17 @@ public class Player extends Locatable implements Renderable, Updatable {
         return y < loc.getY() + size && y + Constants.PLAYER_SIZE > loc.getY();
     }
 
-    private boolean collidesX(Locatable loc, int size) {
-        return collidesX(loc, size, getX());
-    }
-
-    private boolean collidesY(Locatable loc, int size) {
-        return collidesY(loc, size, getY());
-    }
-
     private boolean collides(Locatable loc, int size) {
         return collidesX(loc, size, getX()) && collidesY(loc, size, getY());
+    }
+
+    private boolean closer(Locatable a, Locatable b) {
+        return closer(this, a, b);
+    }
+
+    private boolean closer(Locatable loc, Locatable a, Locatable b) {
+        // TODO
+        return loc.getX() - a.getX() < loc.getX() - b.getX() && loc.getY() - a.getY() < loc.getY() - b.getY();
     }
 
 }

@@ -31,11 +31,11 @@ public class World implements Renderable {
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
-
-        for (int x = 0; x < tiles.length; x++) {
-            for (int y = 0; y < getLower(lastGeneratedLayer, tiles[0].length); y++) {
-                if (tiles[x][y] != null) {
-                    Tile t = tiles[x][y];
+        // TODO narrow loops
+        for (Tile[] tile : tiles) {
+            for (int y = 0; y < Math.min(lastGeneratedLayer, tiles[0].length); y++) {
+                if (tile[y] != null) {
+                    Tile t = tile[y];
 
                     if (Methods.between(Math.floor(camera.getX() - Constants.TILE_SIZE), Math.ceil(camera.getX() + Constants.SCREEN_WIDTH + Constants.TILE_SIZE), t.getX()) &&
                             Methods.between(Math.floor(camera.getY() - Constants.TILE_SIZE), Math.ceil(camera.getY() + Constants.SCREEN_HEIGHT + Constants.TILE_SIZE), t.getY())) {
@@ -51,31 +51,15 @@ public class World implements Renderable {
         }
     }
 
-    public Tile getTileAt(int x, int y) {
+    private Tile getTileAt(int x, int y) {
         if (0 <= x && x < tiles.length && 0 <= y && y < tiles[0].length) {
             return tiles[x][y];
         }
         return null;
     }
 
-    public ArrayList<Tile> getTilesAround(float x, float y, int range) {
-        ArrayList<Tile> tiles = new ArrayList<Tile>();
-
-        int realX = Math.round(x / Constants.TILE_SIZE);
-        int realY = Math.round(y / Constants.TILE_SIZE);
-
-        for (int i = realX - range; i <= realX + range; i++) {
-            for (int j = realY - range; j <= realY + range; j++) {
-                Tile t = getTileAt(i, j);
-                if (t != null)
-                    tiles.add(t);
-            }
-        }
-        return tiles;
-    }
-
-    public ArrayList<Tile> getTilesBetween(float x1, float x2, float y1, float y2) {
-        ArrayList<Tile> tiles = new ArrayList<Tile>();
+    public ArrayList<Tile> getTilesBetween(float x1, float y1, float x2, float y2) {
+        ArrayList<Tile> tiles = new ArrayList<>();
 
         if (x1 == x2 && y1 == y2) {
             return tiles;
@@ -86,14 +70,23 @@ public class World implements Renderable {
         float minY = Math.min(y1, y2);
         float maxY = Math.max(y1, y2);
 
-        int snappedX1 = (int) (minX / Constants.TILE_SIZE);
-        int snappedX2 = (int) (maxX / Constants.TILE_SIZE);
-        int snappedY1 = (int) (minY / Constants.TILE_SIZE);
-        int snappedY2 = (int) (minY / Constants.TILE_SIZE);
+        int snappedX1 = (int) Math.floor(minX / Constants.TILE_SIZE);
+        int snappedX2 = (int) Math.ceil(maxX / Constants.TILE_SIZE);
+        int snappedY1 = (int) Math.floor(minY / Constants.TILE_SIZE);
+        int snappedY2 = (int) Math.ceil(maxY / Constants.TILE_SIZE);
 
+        int tilesBetweenX = snappedX2 - snappedX1;
+        int tilesBetweenY = snappedY2 - snappedY1;
 
-        int tilesBetweenX = snappedX1 - snappedX2;
-        int tilesBetweenY = snappedY1 - snappedY2;
+        for (int i = 0; i <= tilesBetweenX; i++) {
+            for (int j = 0; j <= tilesBetweenY; j++) {
+                Tile t = getTileAt(snappedX1 + i, snappedY1 + j);
+
+                if (t != null) {
+                    tiles.add(t);
+                }
+            }
+        }
 
         return tiles;
     }
@@ -103,7 +96,7 @@ public class World implements Renderable {
     public void generate(int height) {
         // TODO - generate TileTypes within their given range
         for (int x = 0; x < tiles.length; x++) {
-            for (int y = lastGeneratedLayer; y < getLower(lastGeneratedLayer + height, tiles[0].length); y++) {
+            for (int y = lastGeneratedLayer; y < Math.min(lastGeneratedLayer + height, tiles[0].length); y++) {
 
                 // set the default TileType
                 tiles[x][y] = new Tile(x * Constants.TILE_SIZE, y * Constants.TILE_SIZE, TileType.getDefault());
@@ -125,12 +118,5 @@ public class World implements Renderable {
         }
 
         lastGeneratedLayer += height;
-    }
-
-    public int getLower(int a, int b) {
-        if (a <= b) {
-            return a;
-        }
-        return b;
     }
 }

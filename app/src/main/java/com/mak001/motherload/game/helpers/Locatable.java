@@ -10,7 +10,7 @@ public abstract class Locatable {
 
     protected Vector2 location;
 
-    public Locatable() {
+    protected Locatable() {
         location = Vector2.Zero();
     }
 
@@ -29,10 +29,6 @@ public abstract class Locatable {
     public void setPos(float x, float y) {
         location.x = x;
         location.y = y;
-    }
-
-    public Vector2 getLocation() {
-        return location;
     }
 
     public float getX() {
