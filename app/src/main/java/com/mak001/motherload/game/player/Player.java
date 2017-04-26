@@ -177,47 +177,37 @@ public class Player extends Locatable implements Renderable, Updatable {
         // loat normaly;
 
         float xInvEntry, yInvEntry;
-        float xInvExit, yInvExit;
+        float xEntry, yEntry;
 
         if (velocity.getX() > 0.0f) {
             xInvEntry = x2 - (x1 + size1);
-            xInvExit = (x2 + size2) - x1;
         } else {
             xInvEntry = (x2 + size2) - x1;
-            xInvExit = x2 - (x1 + size1);
         }
 
         if (velocity.getY() > 0.0f) {
             yInvEntry = y2 - (y1 + size1);
-            yInvExit = (y2 + size2) - y1;
         } else {
             yInvEntry = (y2 + size2) - y1;
-            yInvExit = y2 - (y1 + size1);
         }
 
-        float xEntry, yEntry;
-        float xExit, yExit;
 
         if (velocity.getX() == 0.0f) {
             xEntry = Float.MIN_VALUE;
-            xExit = Float.MAX_VALUE;
         } else {
             xEntry = xInvEntry / velocity.getX();
-            xExit = xInvExit / velocity.getX();
         }
 
         if (velocity.getY() == 0.0f) {
             yEntry = Float.MIN_VALUE;
-            yExit = Float.MAX_VALUE;
         } else {
             yEntry = yInvEntry / velocity.getY();
-            yExit = yInvExit / velocity.getY();
         }
 
-        System.out.println("(" + xEntry + ", " + yEntry + ")");
+        System.out.println("(" + xInvEntry + ", " + yInvEntry + ") :: (" + xEntry + ", " + yEntry + ") :: (" + velocity.getX() + ", " + velocity.getY() + ")");
 
-        float entryTime = Math.max(xEntry, yEntry);
-        float exitTime = Math.min(xExit, yExit);
+        float entryTime = xEntry < 0 && yEntry < 0 ? Math.min(xEntry, yEntry) : Math.max(xEntry, yEntry);
+        float exitTime = xEntry < 0 && yEntry < 0 ? Math.max(xEntry, yEntry) : Math.min(xEntry, yEntry);
 
         if (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f) {
             // normalx = 0.0f;
