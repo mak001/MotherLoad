@@ -126,6 +126,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         if (currentState.equals(State.PLAYING)) {
             joyStick.draw(canvas, paint);
+            canvas.drawText("(" + Constants.PLAYER.getX() + ", " + Constants.PLAYER.getY() + ")", 50f, 50f, paint);
         }
     }
 

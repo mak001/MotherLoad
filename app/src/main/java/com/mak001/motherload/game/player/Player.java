@@ -84,6 +84,15 @@ public class Player extends Locatable implements Renderable, Updatable {
         }
 
         if (collideY != null) {
+            float collisiontime = sweptAABB(collideY.getX(), collideY.getY());
+            System.out.println(collisiontime);
+            location.add((velocity.x * Constants.MOVE_SPEED_X * delta) * collisiontime, (velocity.y * Constants.MOVE_SPEED_Y * delta) * collisiontime);
+        } else {
+            setPos(newX, newY);
+        }
+
+        /*
+        if (collideY != null) {
             if (getY() < newY) { // moving down
                 setY(collideY.getY() + Constants.TILE_SIZE);
                 System.out.println("Moving down");
@@ -97,7 +106,7 @@ public class Player extends Locatable implements Renderable, Updatable {
             setY(newY);
         }
 
-        setY(newY);
+        // setY(newY);
 
         for (int i = 0; i < tiles.size(); i++) {
             Tile t = tiles.get(i);
@@ -125,8 +134,8 @@ public class Player extends Locatable implements Renderable, Updatable {
         } else {
             setX(newX);
         }
-
-        setX(newX);
+        */
+        // setX(newX);
 
     }
 
@@ -152,8 +161,92 @@ public class Player extends Locatable implements Renderable, Updatable {
     }
 
     private boolean closer(Locatable loc, Locatable a, Locatable b) {
-        // TODO
         return loc.getX() - a.getX() < loc.getX() - b.getX() && loc.getY() - a.getY() < loc.getY() - b.getY();
+    }
+
+    private float sweptAABB(float x, float y) {
+        return sweptAABB(x, y, Constants.TILE_SIZE);
+    }
+
+    private float sweptAABB(float x, float y, int size) {
+        return sweptAABB(getX(), getY(), Constants.PLAYER_SIZE, x, y, size);
+    }
+
+    private float sweptAABB(float x1, float y1, int size1, float x2, float y2, int size2) {
+        // float normalx;
+        // loat normaly;
+
+        float xInvEntry, yInvEntry;
+        float xInvExit, yInvExit;
+
+        if (velocity.getX() > 0.0f) {
+            xInvEntry = x2 - (x1 + size1);
+            xInvExit = (x2 + size2) - x1;
+        } else {
+            xInvEntry = (x2 + size2) - x1;
+            xInvExit = x2 - (x1 + size1);
+        }
+
+        if (velocity.getY() > 0.0f) {
+            yInvEntry = y2 - (y1 + size1);
+            yInvExit = (y2 + size2) - y1;
+        } else {
+            yInvEntry = (y2 + size2) - y1;
+            yInvExit = y2 - (y1 + size1);
+        }
+
+        float xEntry, yEntry;
+        float xExit, yExit;
+
+        if (velocity.getX() == 0.0f) {
+            xEntry = Float.MIN_VALUE;
+            xExit = Float.MAX_VALUE;
+        } else {
+            xEntry = xInvEntry / velocity.getX();
+            xExit = xInvExit / velocity.getX();
+        }
+
+        if (velocity.getY() == 0.0f) {
+            yEntry = Float.MIN_VALUE;
+            yExit = Float.MAX_VALUE;
+        } else {
+            yEntry = yInvEntry / velocity.getY();
+            yExit = yInvExit / velocity.getY();
+        }
+
+        System.out.println("(" + xEntry + ", " + yEntry + ")");
+
+        float entryTime = Math.max(xEntry, yEntry);
+        float exitTime = Math.min(xExit, yExit);
+
+        if (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f) {
+            // normalx = 0.0f;
+            // normaly = 0.0f;
+            System.out.println(entryTime + " :: " + exitTime);
+            System.out.println("no collision");
+            return 1.0f;
+        } else {// if there was a collision
+            // calculate normal of collided surface
+            /*
+            if (xEntry > yEntry) {
+                if (xInvEntry < 0.0f) {
+                    // normalx = 1.0f;
+                    // normaly = 0.0f;
+                } else {
+                    // normalx = -1.0f;
+                    // normaly = 0.0f;
+                }
+            } else {
+                if (yInvEntry < 0.0f) {
+                    // normalx = 0.0f;
+                    // normaly = 1.0f;
+                } else {
+                    // normalx = 0.0f;
+                    // normaly = -1.0f;
+                }
+            }*/
+            return entryTime;
+        }
     }
 
 }
