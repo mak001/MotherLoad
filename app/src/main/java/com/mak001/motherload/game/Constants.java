@@ -16,10 +16,10 @@ public class Constants {
     public static final int PLAYER_SIZE = 88;
 
     // move sped multiplier for player
-    public static final float MOVE_SPEED_X = 200;
-    public static final float MOVE_SPEED_Y = 300;
+    public static final float MOVE_SPEED_X = 100;
+    public static final float MOVE_SPEED_Y = 150;
 
-    public static final float GRAVITY = -125f;
+    public static final float GRAVITY = -65f;
     public static final int MAX_FALL_SPEED = (int) (MOVE_SPEED_Y * TILE_SIZE);
 
     public static Resources RESOURCES;

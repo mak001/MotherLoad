@@ -52,8 +52,7 @@ public class Player extends Locatable implements Renderable, Updatable {
         }
 
         // Vector2 oldLoc = getLocation().cpy();
-        Tile collideX = null;
-        Tile collideY = null;
+        Tile collide = null;
 
         // velocity.y -= (Constants.GRAVITY * delta);
 
@@ -63,97 +62,47 @@ public class Player extends Locatable implements Renderable, Updatable {
             velocity.y = -Constants.MAX_FALL_SPEED;
         }
 
-        // setX(location.x + velocity.x * Constants.MOVE_SPEED_X * delta);
-        // setY(location.y + velocity.y * Constants.MOVE_SPEED_Y * delta);
+        float vx = velocity.x * Constants.MOVE_SPEED_X * delta;
+        float vy = velocity.y * Constants.MOVE_SPEED_Y * delta;
 
-        float newX = location.x + velocity.x * Constants.MOVE_SPEED_X * delta;
-        float newY = location.y + velocity.y * Constants.MOVE_SPEED_Y * delta;
+        float newX = location.x + vx;
+        float newY = location.y + vy;
 
         ArrayList<Tile> tiles = Constants.WORLD.getTilesBetween(getX(), getY(), newX, newY);
 
+        StringBuilder sb = new StringBuilder();
+        for (Tile t : tiles) {
+            sb.append(t.toString());
+            sb.append(", ");
+        }
+        System.out.println(sb.toString());
+
         for (int i = 0; i < tiles.size(); i++) {
             Tile t = tiles.get(i);
-            if (t.getTileType().equals(TileType.AIR)) continue;
-            if (collides(t, Constants.TILE_SIZE)) {
-                if (collideY == null) {
-                    collideY = t;
-                } else {
-                    if (closer(t, collideY)) collideY = t;
-                }
+            if (t == null || t.getTileType().equals(TileType.AIR)) continue;
+
+            if (collide == null) {
+                collide = t;
+            } else {
+                if (closer(t, collide)) collide = t;
             }
         }
 
-        if (collideY != null) {
-            float collisiontime = sweptAABB(collideY.getX(), collideY.getY());
+        if (collide != null) {
+            // float vx, float vy, float x2, float y2
+            float[] collisiontime = sweptAABB(vx, vy, collide.getX(), collide.getY());
+            // TODO
+
             System.out.println(collisiontime);
-            location.add((velocity.x * Constants.MOVE_SPEED_X * delta) * collisiontime, (velocity.y * Constants.MOVE_SPEED_Y * delta) * collisiontime);
+            location.add(vx * collisiontime[0], vy * collisiontime[0]);
         } else {
-            setPos(newX, newY);
+            location.add(vx, vy);
         }
-
-        /*
-        if (collideY != null) {
-            if (getY() < newY) { // moving down
-                setY(collideY.getY() + Constants.TILE_SIZE);
-                System.out.println("Moving down");
-
-            } else { // moving up
-                setY(collideY.getY() - Constants.PLAYER_SIZE);
-                System.out.println("Moving up");
-            }
-            velocity.y = 0;
-        } else {
-            setY(newY);
-        }
-
-        // setY(newY);
-
-        for (int i = 0; i < tiles.size(); i++) {
-            Tile t = tiles.get(i);
-            if (t.getTileType().equals(TileType.AIR)) continue;
-            if (collides(t, Constants.TILE_SIZE)) {
-                if (collideX == null) {
-                    collideX = t;
-                } else {
-                    if (closer(t, collideX)) collideX = t;
-                }
-            }
-        }
-
-        if (collideX != null) {
-            if (getX() < newX) { // moving right
-                setX(collideX.getX() - Constants.PLAYER_SIZE);
-                System.out.println("Moving right");
-
-            } else { // moving left
-                setX(collideX.getX() + Constants.TILE_SIZE);
-                System.out.println("Moving left");
-
-            }
-            velocity.x = 0;
-        } else {
-            setX(newX);
-        }
-        */
-        // setX(newX);
-
     }
 
     public void move(Vector2 vec, float delta) {
         velocity.x = vec.getX() * (Constants.MOVE_SPEED_X * delta);
         velocity.y = vec.getY() * (Constants.MOVE_SPEED_Y * delta);
-    }
-
-    private boolean collidesX(Locatable loc, int size, float x) {
-        return x < loc.getX() + size && x + Constants.PLAYER_SIZE > loc.getX();
-    }
-
-    private boolean collidesY(Locatable loc, int size, float y) {
-        return y < loc.getY() + size && y + Constants.PLAYER_SIZE > loc.getY();
-    }
-
-    private boolean collides(Locatable loc, int size) {
-        return collidesX(loc, size, getX()) && collidesY(loc, size, getY());
     }
 
     private boolean closer(Locatable a, Locatable b) {
@@ -164,78 +113,76 @@ public class Player extends Locatable implements Renderable, Updatable {
         return loc.getX() - a.getX() < loc.getX() - b.getX() && loc.getY() - a.getY() < loc.getY() - b.getY();
     }
 
-    private float sweptAABB(float x, float y) {
-        return sweptAABB(x, y, Constants.TILE_SIZE);
+    private float[] sweptAABB(float vx, float vy, float x2, float y2) {
+        return sweptAABB(vx, vy, x2, y2, Constants.TILE_SIZE);
     }
 
-    private float sweptAABB(float x, float y, int size) {
-        return sweptAABB(getX(), getY(), Constants.PLAYER_SIZE, x, y, size);
+    private float[] sweptAABB(float vx, float vy, float x2, float y2, int size2) {
+        return sweptAABB(getX(), getY(), vx, vy, Constants.PLAYER_SIZE, x2, y2, size2);
     }
 
-    private float sweptAABB(float x1, float y1, int size1, float x2, float y2, int size2) {
-        // float normalx;
-        // loat normaly;
+    private float[] sweptAABB(float x1, float y1, float vx, float vy, int size1, float x2, float y2, int size2) {
+
+        // entry time, normal x, normal y
+        float[] returned = new float[]{1f, 0f, 0f};
 
         float xInvEntry, yInvEntry;
         float xEntry, yEntry;
 
-        if (velocity.getX() > 0.0f) {
+        if (vx > 0f) {
             xInvEntry = x2 - (x1 + size1);
         } else {
             xInvEntry = (x2 + size2) - x1;
         }
 
-        if (velocity.getY() > 0.0f) {
+        if (vy > 0f) {
             yInvEntry = y2 - (y1 + size1);
         } else {
             yInvEntry = (y2 + size2) - y1;
         }
 
 
-        if (velocity.getX() == 0.0f) {
+        if (velocity.getX() == 0f) {
             xEntry = Float.MIN_VALUE;
         } else {
-            xEntry = xInvEntry / velocity.getX();
+            xEntry = xInvEntry / vx;
         }
 
-        if (velocity.getY() == 0.0f) {
+        if (velocity.getY() == 0f) {
             yEntry = Float.MIN_VALUE;
         } else {
-            yEntry = yInvEntry / velocity.getY();
+            yEntry = yInvEntry / vy;
         }
 
-        System.out.println("(" + xInvEntry + ", " + yInvEntry + ") :: (" + xEntry + ", " + yEntry + ") :: (" + velocity.getX() + ", " + velocity.getY() + ")");
+        float entryTime = Math.max(xEntry, yEntry);
+        float exitTime = Math.min(xEntry, yEntry);
 
-        float entryTime = xEntry < 0 && yEntry < 0 ? Math.min(xEntry, yEntry) : Math.max(xEntry, yEntry);
-        float exitTime = xEntry < 0 && yEntry < 0 ? Math.max(xEntry, yEntry) : Math.min(xEntry, yEntry);
-
-        if (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f) {
-            // normalx = 0.0f;
-            // normaly = 0.0f;
+        if (entryTime > exitTime || xEntry < 0f && yEntry < 0f || xEntry > 1f || yEntry > 1f) {
             System.out.println(entryTime + " :: " + exitTime);
             System.out.println("no collision");
-            return 1.0f;
+
+            return returned;
         } else {// if there was a collision
             // calculate normal of collided surface
-            /*
             if (xEntry > yEntry) {
-                if (xInvEntry < 0.0f) {
-                    // normalx = 1.0f;
-                    // normaly = 0.0f;
+                if (xInvEntry < 0f) {
+                    returned[1] = 1f;
+                    returned[2] = 0f;
                 } else {
-                    // normalx = -1.0f;
-                    // normaly = 0.0f;
+                    returned[1] = -1f;
+                    returned[2] = 0f;
                 }
             } else {
-                if (yInvEntry < 0.0f) {
-                    // normalx = 0.0f;
-                    // normaly = 1.0f;
+                if (yInvEntry < 0f) {
+                    returned[1] = 0f;
+                    returned[2] = 1f;
                 } else {
-                    // normalx = 0.0f;
-                    // normaly = -1.0f;
+                    returned[1] = 0f;
+                    returned[2] = -1f;
                 }
-            }*/
-            return entryTime;
+            }
+            returned[0] = entryTime;
+            return returned;
         }
     }
 
