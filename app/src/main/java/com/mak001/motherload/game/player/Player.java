@@ -77,6 +77,7 @@ public class Player extends Locatable implements Renderable, Updatable {
         }
         System.out.println(sb.toString());
 
+        // TODO - sample more tiles for better results
         for (int i = 0; i < tiles.size(); i++) {
             Tile t = tiles.get(i);
             if (t == null || t.getTileType().equals(TileType.AIR)) continue;
@@ -90,12 +91,20 @@ public class Player extends Locatable implements Renderable, Updatable {
 
         if (collide != null) {
             // float vx, float vy, float x2, float y2
-            float[] collisiontime = sweptAABB(vx, vy, collide.getX(), collide.getY());
-            // TODO
+            float[] collisionTime = sweptAABB(vx, vy, collide.getX(), collide.getY());
 
-            System.out.println(collisiontime);
-            location.add(vx * collisiontime[0], vy * collisiontime[0]);
+            float remainingTime = 1 - collisionTime[0];
+
+            // gets the dot product of velocity and normals
+            float dotprod = (vx * collisionTime[2] + vy * collisionTime[1]) * remainingTime;
+            // gets additional axis force
+            float newVX = dotprod * collisionTime[2];
+            float newVY = dotprod * collisionTime[1];
+
+            // adds additional axis force to stop point
+            location.add((vx * collisionTime[0]) + newVX, (vy * collisionTime[0]) + newVY);
         } else {
+            // move to location, doesn't collide with anything
             location.add(vx, vy);
         }
     }
@@ -121,6 +130,19 @@ public class Player extends Locatable implements Renderable, Updatable {
         return sweptAABB(getX(), getY(), vx, vy, Constants.PLAYER_SIZE, x2, y2, size2);
     }
 
+    /**
+     * Originally from https://www.gamedev.net/resources/_/technical/game-programming/swept-aabb-collision-detection-and-response-r3084
+     *
+     * @param x1    x of moving object
+     * @param y1    y of moving object
+     * @param vx    x velocity of moving object
+     * @param vy    y velocity of moving object
+     * @param size1 width and height of moving object (assumed to be square)
+     * @param x2    x of stationary object
+     * @param y2    y of stationary object
+     * @param size2 width and height of stationary object (assumed to be square)
+     * @return float[] where index 0 is the entry time, index 1 is normal x, and index 2 is normal y
+     */
     private float[] sweptAABB(float x1, float y1, float vx, float vy, int size1, float x2, float y2, int size2) {
 
         // entry time, normal x, normal y
@@ -153,9 +175,11 @@ public class Player extends Locatable implements Renderable, Updatable {
             yEntry = (yInvEntry / size2) / vy;
         }
 
+        // absoluted so it will return between 0 and one (was negative before)
         float entryTime = Math.abs(Math.max(xEntry, yEntry));
         float exitTime = Math.abs(Math.min(xEntry, yEntry));
 
+        // no collision
         if (entryTime > exitTime || xEntry < 0f && yEntry < 0f || xEntry > 1f || yEntry > 1f) {
             return returned;
 
@@ -178,7 +202,7 @@ public class Player extends Locatable implements Renderable, Updatable {
                     returned[2] = -1f;
                 }
             }
-            returned[0] = entryTime;
+            returned[0] = (entryTime * size2);
             return returned;
         }
     }

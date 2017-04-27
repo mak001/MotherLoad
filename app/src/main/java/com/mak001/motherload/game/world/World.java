@@ -61,6 +61,7 @@ public class World implements Renderable {
     public ArrayList<Tile> getTilesBetween(float x1, float y1, float x2, float y2) {
         ArrayList<Tile> tiles = new ArrayList<>();
 
+        // probably never gonna happen (gravity), but a good sanity check
         if (x1 == x2 && y1 == y2) {
             return tiles;
         }
