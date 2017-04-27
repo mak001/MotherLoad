@@ -141,27 +141,24 @@ public class Player extends Locatable implements Renderable, Updatable {
             yInvEntry = (y2 + size2) - y1;
         }
 
-
-        if (velocity.getX() == 0f) {
+        if (vx == 0f) {
             xEntry = Float.MIN_VALUE;
         } else {
-            xEntry = xInvEntry / vx;
+            xEntry = (xInvEntry / size2) / vx;
         }
 
-        if (velocity.getY() == 0f) {
+        if (vy == 0f) {
             yEntry = Float.MIN_VALUE;
         } else {
-            yEntry = yInvEntry / vy;
+            yEntry = (yInvEntry / size2) / vy;
         }
 
-        float entryTime = Math.max(xEntry, yEntry);
-        float exitTime = Math.min(xEntry, yEntry);
+        float entryTime = Math.abs(Math.max(xEntry, yEntry));
+        float exitTime = Math.abs(Math.min(xEntry, yEntry));
 
         if (entryTime > exitTime || xEntry < 0f && yEntry < 0f || xEntry > 1f || yEntry > 1f) {
-            System.out.println(entryTime + " :: " + exitTime);
-            System.out.println("no collision");
-
             return returned;
+
         } else {// if there was a collision
             // calculate normal of collided surface
             if (xEntry > yEntry) {
