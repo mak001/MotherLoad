@@ -90,11 +90,19 @@ public class Player extends Locatable implements Renderable, Updatable {
 
         if (collide != null) {
             // float vx, float vy, float x2, float y2
-            float[] collisiontime = sweptAABB(vx, vy, collide.getX(), collide.getY());
-            // TODO
+            float[] collisionTime = sweptAABB(vx, vy, collide.getX(), collide.getY());
+            System.out.println("(" + collisionTime[0] + " :: (" + collisionTime[1] + ", " + collisionTime[2] + "))");
 
-            System.out.println(collisiontime);
-            location.add(vx * collisiontime[0], vy * collisiontime[0]);
+            float remainingTime = 1 - collisionTime[0];
+
+
+            float dotprod = (vx * collisionTime[2] + vy * collisionTime[1]) * remainingTime;
+            float newVX = dotprod * collisionTime[2];
+            float newVY = dotprod * collisionTime[1];
+
+            System.out.println("(" + newVX + ", " + newVY + ")");
+
+            location.add((vx * collisionTime[0]) + newVX, (vy * collisionTime[0]) + newVY);
         } else {
             location.add(vx, vy);
         }
@@ -178,7 +186,7 @@ public class Player extends Locatable implements Renderable, Updatable {
                     returned[2] = -1f;
                 }
             }
-            returned[0] = entryTime;
+            returned[0] = (entryTime * size2);
             return returned;
         }
     }
