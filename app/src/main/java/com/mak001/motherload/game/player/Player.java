@@ -70,13 +70,6 @@ public class Player extends Locatable implements Renderable, Updatable {
 
         ArrayList<Tile> tiles = Constants.WORLD.getTilesBetween(getX(), getY(), newX, newY);
 
-        StringBuilder sb = new StringBuilder();
-        for (Tile t : tiles) {
-            sb.append(t.toString());
-            sb.append(", ");
-        }
-        System.out.println(sb.toString());
-
         for (int i = 0; i < tiles.size(); i++) {
             Tile t = tiles.get(i);
             if (t == null || t.getTileType().equals(TileType.AIR)) continue;
@@ -91,16 +84,12 @@ public class Player extends Locatable implements Renderable, Updatable {
         if (collide != null) {
             // float vx, float vy, float x2, float y2
             float[] collisionTime = sweptAABB(vx, vy, collide.getX(), collide.getY());
-            System.out.println("(" + collisionTime[0] + " :: (" + collisionTime[1] + ", " + collisionTime[2] + "))");
 
             float remainingTime = 1 - collisionTime[0];
-
 
             float dotprod = (vx * collisionTime[2] + vy * collisionTime[1]) * remainingTime;
             float newVX = dotprod * collisionTime[2];
             float newVY = dotprod * collisionTime[1];
-
-            System.out.println("(" + newVX + ", " + newVY + ")");
 
             location.add((vx * collisionTime[0]) + newVX, (vy * collisionTime[0]) + newVY);
         } else {

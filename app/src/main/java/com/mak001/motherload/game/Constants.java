@@ -17,16 +17,15 @@ public class Constants {
 
     // move sped multiplier for player
     public static final float MOVE_SPEED_X = 100;
-    public static final float MOVE_SPEED_Y = 150;
+    public static final float MOVE_SPEED_Y = 250;
 
-    public static final float GRAVITY = -65f;
+    public static final float GRAVITY = -100f;
     public static final int MAX_FALL_SPEED = (int) (MOVE_SPEED_Y * TILE_SIZE);
 
     public static Resources RESOURCES;
     public static GamePanel GAME_PANEL;
 
     public static World WORLD;
-    public static Player PLAYER;
 
     public static int SCREEN_WIDTH;
     public static int SCREEN_HEIGHT;

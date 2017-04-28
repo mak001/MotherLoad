@@ -59,8 +59,13 @@ public class World implements Renderable {
     }
 
     public ArrayList<Tile> getTilesBetween(float x1, float y1, float x2, float y2) {
+        return getTilesBetween(x1, y1, x2, y2, false);
+    }
+
+    public ArrayList<Tile> getTilesBetween(float x1, float y1, float x2, float y2, boolean includeAir) {
         ArrayList<Tile> tiles = new ArrayList<>();
 
+        // sanity check
         if (x1 == x2 && y1 == y2) {
             return tiles;
         }
@@ -82,7 +87,7 @@ public class World implements Renderable {
             for (int j = 0; j <= tilesBetweenY; j++) {
                 Tile t = getTileAt(snappedX1 + i, snappedY1 + j);
 
-                if (t != null) {
+                if (t != null && (includeAir || !t.getTileType().equals(TileType.AIR))) {
                     tiles.add(t);
                 }
             }
@@ -90,7 +95,6 @@ public class World implements Renderable {
 
         return tiles;
     }
-
 
 
     public void generate(int height) {

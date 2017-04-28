@@ -23,7 +23,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private GameThread thread;
 
     private JoyStick joyStick;
-
+    private Player player;
     private Camera camera;
 
     private SoundManager soundManager;
@@ -43,7 +43,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         camera = new Camera();
 
-        Constants.PLAYER = new Player(Constants.PLAYER_SIZE, -(Constants.PLAYER_SIZE + 1));
+        player = new Player(Constants.PLAYER_SIZE, -(Constants.PLAYER_SIZE + 1));
 
         Constants.WORLD = new World(camera);
         joyStick = new JoyStick(0, 0, 256);
@@ -106,9 +106,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update(float delta) {
-        Constants.PLAYER.move(joyStick.getDirection(), delta);
-        Constants.PLAYER.update(delta);
-        camera.setPos((Constants.PLAYER.getX() + Constants.PLAYER_SIZE / 2) - (Constants.SCREEN_WIDTH / 2), (Constants.PLAYER.getY() + Constants.PLAYER_SIZE / 2) - (Constants.SCREEN_HEIGHT / 2));
+        player.move(joyStick.getDirection(), delta);
+        player.update(delta);
+        camera.setPos((player.getX() + Constants.PLAYER_SIZE / 2) - (Constants.SCREEN_WIDTH / 2), (player.getY() + Constants.PLAYER_SIZE / 2) - (Constants.SCREEN_HEIGHT / 2));
 
         //System.out.println(player.getLocation() + " :: (" + (camera.getX() + (Constants.SCREEN_WIDTH / 2)) + ", " + (camera.getY() + Constants.SCREEN_HEIGHT / 2) + ")");
     }
@@ -122,11 +122,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawColor(Color.BLACK);
 
         Constants.WORLD.draw(canvas, paint);
-        Constants.PLAYER.draw(canvas, paint);
+        player.draw(canvas, paint);
 
         if (currentState.equals(State.PLAYING)) {
             joyStick.draw(canvas, paint);
-            canvas.drawText("(" + Constants.PLAYER.getX() + ", " + Constants.PLAYER.getY() + ")", 50f, 50f, paint);
+            canvas.drawText("(" + player.getX() + ", " + player.getY() + ")", 50f, 50f, paint);
         }
     }
 
