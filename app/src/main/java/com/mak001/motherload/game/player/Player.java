@@ -4,9 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.R;
+import com.mak001.motherload.game.Camera;
 import com.mak001.motherload.game.Constants;
 import com.mak001.motherload.game.helpers.Locatable;
 import com.mak001.motherload.game.helpers.Renderable;
@@ -22,20 +25,44 @@ import java.util.ArrayList;
  */
 public class Player extends Locatable implements Renderable, Updatable {
 
-    private Bitmap image;
+
+    private final Bitmap image;
+    private final RectF display;
+
+    private Rect[][] sprites;
+
     private Vector2 velocity;
 
     public Player(int x, int y) {
         super(x, y);
         this.velocity = Vector2.Zero();
 
-        image = BitmapFactory.decodeResource(Constants.RESOURCES, R.drawable.player);
-        image = Bitmap.createScaledBitmap(image, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE, false);
+        float adjustedX = (Constants.SCREEN_WIDTH / 2f) - (Constants.TILE_SIZE / 2f);
+        float adjustedY = (Constants.SCREEN_HEIGHT / 2f) - (Constants.TILE_SIZE / 2f);
+        display = new RectF(adjustedX, adjustedY, adjustedX + Constants.TILE_SIZE, adjustedY + Constants.TILE_SIZE);
+
+        // loading image
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        image = BitmapFactory.decodeResource(Constants.RESOURCES, R.drawable.player, options);
+
+        // sprite stuff
+        int inX = image.getWidth() / Constants.BITMAP_TILE_SIZE;
+        int inY = image.getHeight() / Constants.BITMAP_TILE_SIZE;
+        sprites = new Rect[inX][inY];
+
+        for (int i = 0; i < inX; i++) {
+            for (int j = 0; j < inY; j++) {
+                int xI = i * Constants.BITMAP_TILE_SIZE;
+                int yJ = j * Constants.BITMAP_TILE_SIZE;
+                sprites[i][j] = new Rect(xI, yJ, xI + Constants.BITMAP_TILE_SIZE, yJ + Constants.BITMAP_TILE_SIZE);
+            }
+        }
     }
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
-        canvas.drawBitmap(image, (Constants.SCREEN_WIDTH / 2) - (Constants.PLAYER_SIZE / 2), (Constants.SCREEN_HEIGHT / 2) - (Constants.PLAYER_SIZE / 2), paint);
+        canvas.drawBitmap(image, sprites[0][0], display, paint);
     }
 
     @Override
