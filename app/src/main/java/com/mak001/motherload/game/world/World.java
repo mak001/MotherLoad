@@ -1,6 +1,5 @@
 package com.mak001.motherload.game.world;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 
 public class World implements Renderable {
 
-    private Tile[][] tiles;
+    private final Tile[][] tiles;
     private int lastGeneratedLayer = 0;
 
     private final Camera camera;

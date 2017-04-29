@@ -32,7 +32,7 @@ public class JoyStick extends Control {
         this(x, y, size, size);
     }
 
-    public JoyStick(int x, int y, int height, int width) {
+    public JoyStick(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.height = height;
@@ -40,9 +40,9 @@ public class JoyStick extends Control {
         this.center = new Point(x + (width / 2), y + (height / 2));
 
         Bitmap image = BitmapFactory.decodeResource(Constants.RESOURCES, R.drawable.controls_joy_stick);
-        this.image = Bitmap.createScaledBitmap(image, height, width, false);
+        this.image = Bitmap.createScaledBitmap(image, width, height, false);
 
-        direction = Vector2.Zero();
+        direction = new Vector2();
     }
 
     public Vector2 getDirection() {

@@ -14,7 +14,6 @@ import com.mak001.motherload.game.helpers.Locatable;
 import com.mak001.motherload.game.helpers.Renderable;
 import com.mak001.motherload.game.helpers.Updatable;
 import com.mak001.motherload.game.world.Tile;
-import com.mak001.motherload.game.world.TileType;
 
 import java.util.ArrayList;
 
@@ -27,15 +26,15 @@ public class Player extends Locatable implements Renderable, Updatable {
     private final Bitmap image;
     private final RectF display;
 
-    private Rect[][] sprites;
+    private final Rect[][] sprites;
     private long lastFrameMillis;
     private int currentFrame = 0;
 
-    private Vector2 velocity;
+    private final Vector2 velocity;
 
     public Player(int x, int y) {
         super(x, y);
-        this.velocity = Vector2.Zero();
+        this.velocity = new Vector2();
 
         lastFrameMillis = System.currentTimeMillis();
 
@@ -65,6 +64,11 @@ public class Player extends Locatable implements Renderable, Updatable {
         }
     }
 
+    public void move(Vector2 vec, float delta) {
+        velocity.x = vec.getX() * (Constants.MOVE_SPEED_X * delta);
+        velocity.y = vec.getY() * (Constants.MOVE_SPEED_Y * delta);
+    }
+
     @Override
     public void draw(Canvas canvas, Paint paint) {
         canvas.drawBitmap(image, sprites[0][currentFrame], display, paint);
@@ -92,8 +96,6 @@ public class Player extends Locatable implements Renderable, Updatable {
             velocity.y = -Constants.MAX_FALL_SPEED;
         }
 
-        Tile collide = null;
-
         float vx = velocity.x * Constants.MOVE_SPEED_X * delta;
         float vy = velocity.y * Constants.MOVE_SPEED_Y * delta;
 
@@ -104,35 +106,39 @@ public class Player extends Locatable implements Renderable, Updatable {
 
         if (tiles.size() == 0) {
             location.add(vx, vy);
+
         } else {
-            float[][] times = new float[tiles.size()][3];
-
-            for (int i = 0; i < tiles.size(); i++) {
-                Tile t = tiles.get(i);
-                times[i] = sweptAABB(vx, vy, t.getX(), t.getY());
-            }
-
-            int closestTime = 0;
-            if (1 < times.length) {
-                for (int i = 1; i < times.length; i++) {
-                    if (times[i][0] < times[closestTime][0]) closestTime = i;
-                }
-            }
+            float[][] times = getTimes(vx, vy, tiles);
+            int closestTime = getNearest(times);
 
             float remainingTime = 1 - times[closestTime][0];
-
             float dotprod = (vx * times[closestTime][2] + vy * times[closestTime][1]) * remainingTime;
             float newVX = dotprod * times[closestTime][2];
             float newVY = dotprod * times[closestTime][1];
 
-            location.add((vx * times[closestTime][0]) + newVX, (vy * times[closestTime][0]) + newVY);
+            // TODO - clamp if second collision
+            location.add((vx * times[closestTime][0] * times[closestTime][0]) + newVX, (vy * times[closestTime][0] * times[closestTime][0]) + newVY);
         }
-
     }
 
-    public void move(Vector2 vec, float delta) {
-        velocity.x = vec.getX() * (Constants.MOVE_SPEED_X * delta);
-        velocity.y = vec.getY() * (Constants.MOVE_SPEED_Y * delta);
+    private float[][] getTimes(float vx, float vy, ArrayList<Tile> tiles) {
+        float[][] times = new float[tiles.size()][3];
+
+        for (int i = 0; i < tiles.size(); i++) {
+            Tile t = tiles.get(i);
+            times[i] = sweptAABB(vx, vy, t.getX(), t.getY());
+        }
+        return times;
+    }
+
+    private int getNearest(float[][] times) {
+        int closestTime = 0;
+        if (1 < times.length) {
+            for (int i = 1; i < times.length; i++) {
+                if (times[i][0] < times[closestTime][0]) closestTime = i;
+            }
+        }
+        return closestTime;
     }
 
     private float[] sweptAABB(float vx, float vy, float x2, float y2) {

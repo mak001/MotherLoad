@@ -1,6 +1,5 @@
 package com.mak001.motherload.game.world;
 
-import android.graphics.Bitmap;
 import android.graphics.Rect;
 
 import com.mak001.motherload.game.helpers.Locatable;
@@ -13,20 +12,20 @@ public class Tile extends Locatable {
 
     private TileType type;
 
-    public Tile(int x, int y, TileType type) {
+    Tile(int x, int y, TileType type) {
         super(x, y);
         this.type = type;
     }
 
-    public void setTileType(TileType type) {
+    void setTileType(TileType type) {
         this.type = type;
     }
 
-    public TileType getTileType() {
+    TileType getTileType() {
         return type;
     }
 
-    public Rect getImage() {
+    Rect getImage() {
         return type.getImage();
     }
 

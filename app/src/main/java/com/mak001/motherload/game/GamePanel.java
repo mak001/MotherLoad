@@ -3,14 +3,11 @@ package com.mak001.motherload.game;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.game.player.JoyStick;
 import com.mak001.motherload.game.player.Player;
 import com.mak001.motherload.game.world.World;

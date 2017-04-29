@@ -2,11 +2,8 @@ package com.mak001.motherload.game;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-import com.mak001.motherload.R;
-import com.mak001.motherload.game.player.Player;
 import com.mak001.motherload.game.world.World;
 
 /**
@@ -26,7 +23,7 @@ public class Constants {
     public static final int PLAYER_SIZE = 88;
 
     // move sped multiplier for player
-    public static final float MOVE_SPEED_X = 100;
+    public static final float MOVE_SPEED_X = 150;
     public static final float MOVE_SPEED_Y = 250;
 
     public static final float GRAVITY = -100f;
