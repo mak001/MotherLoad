@@ -102,45 +102,37 @@ public class Player extends Locatable implements Renderable, Updatable {
 
         ArrayList<Tile> tiles = Constants.WORLD.getTilesBetween(getX(), getY(), newX, newY);
 
-        for (int i = 0; i < tiles.size(); i++) {
-            Tile t = tiles.get(i);
-            if (t == null || t.getTileType().equals(TileType.AIR)) continue;
-
-            if (collide == null) {
-                collide = t;
-            } else {
-                if (closer(t, collide)) collide = t;
-            }
-        }
-
-        if (collide != null) {
-            // float vx, float vy, float x2, float y2
-            float[] collisionTime = sweptAABB(vx, vy, collide.getX(), collide.getY());
-
-            float remainingTime = 1 - collisionTime[0];
-
-            float dotprod = (vx * collisionTime[2] + vy * collisionTime[1]) * remainingTime;
-            float newVX = dotprod * collisionTime[2];
-            float newVY = dotprod * collisionTime[1];
-
-            location.add((vx * collisionTime[0]) + newVX, (vy * collisionTime[0]) + newVY);
-        } else {
+        if (tiles.size() == 0) {
             location.add(vx, vy);
+        } else {
+            float[][] times = new float[tiles.size()][3];
+
+            for (int i = 0; i < tiles.size(); i++) {
+                Tile t = tiles.get(i);
+                times[i] = sweptAABB(vx, vy, t.getX(), t.getY());
+            }
+
+            int closestTime = 0;
+            if (1 < times.length) {
+                for (int i = 1; i < times.length; i++) {
+                    if (times[i][0] < times[closestTime][0]) closestTime = i;
+                }
+            }
+
+            float remainingTime = 1 - times[closestTime][0];
+
+            float dotprod = (vx * times[closestTime][2] + vy * times[closestTime][1]) * remainingTime;
+            float newVX = dotprod * times[closestTime][2];
+            float newVY = dotprod * times[closestTime][1];
+
+            location.add((vx * times[closestTime][0]) + newVX, (vy * times[closestTime][0]) + newVY);
         }
+
     }
 
     public void move(Vector2 vec, float delta) {
         velocity.x = vec.getX() * (Constants.MOVE_SPEED_X * delta);
         velocity.y = vec.getY() * (Constants.MOVE_SPEED_Y * delta);
-    }
-
-    private boolean closer(Locatable a, Locatable b) {
-        return closer(this, Constants.PLAYER_SIZE, a, Constants.TILE_SIZE, b, Constants.TILE_SIZE);
-    }
-
-    private boolean closer(Locatable loc, int locSize, Locatable a, int sizeA, Locatable b, int sizeB) {
-        return (loc.getX() + (locSize / 2)) - (a.getX() + (sizeA / 2)) < (loc.getX() + (locSize / 2)) - (b.getX() + (sizeB / 2)) &&
-                (loc.getY() + (locSize / 2)) - (a.getY() + (sizeA / 2)) < (loc.getY() + (locSize / 2)) - (b.getY() + (sizeB / 2));
     }
 
     private float[] sweptAABB(float vx, float vy, float x2, float y2) {
