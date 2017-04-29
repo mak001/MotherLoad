@@ -14,6 +14,8 @@ import com.mak001.motherload.game.world.World;
 
 public class Constants {
 
+    public static final int ANIMATION_FRAME_TIME = 150;
+
     // tileset stuff
     public static final int BITMAP_TILE_SIZE = 32;
     public static Bitmap TILESET;

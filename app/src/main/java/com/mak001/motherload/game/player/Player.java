@@ -9,7 +9,6 @@ import android.graphics.RectF;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.R;
-import com.mak001.motherload.game.Camera;
 import com.mak001.motherload.game.Constants;
 import com.mak001.motherload.game.helpers.Locatable;
 import com.mak001.motherload.game.helpers.Renderable;
@@ -25,17 +24,20 @@ import java.util.ArrayList;
  */
 public class Player extends Locatable implements Renderable, Updatable {
 
-
     private final Bitmap image;
     private final RectF display;
 
     private Rect[][] sprites;
+    private long lastFrameMillis;
+    private int currentFrame = 0;
 
     private Vector2 velocity;
 
     public Player(int x, int y) {
         super(x, y);
         this.velocity = Vector2.Zero();
+
+        lastFrameMillis = System.currentTimeMillis();
 
         float adjustedX = (Constants.SCREEN_WIDTH / 2f) - (Constants.TILE_SIZE / 2f);
         float adjustedY = (Constants.SCREEN_HEIGHT / 2f) - (Constants.TILE_SIZE / 2f);
@@ -49,24 +51,36 @@ public class Player extends Locatable implements Renderable, Updatable {
         // sprite stuff
         int inX = image.getWidth() / Constants.BITMAP_TILE_SIZE;
         int inY = image.getHeight() / Constants.BITMAP_TILE_SIZE;
-        sprites = new Rect[inX][inY];
+        sprites = new Rect[inY][inX];
 
-        for (int i = 0; i < inX; i++) {
-            for (int j = 0; j < inY; j++) {
-                int xI = i * Constants.BITMAP_TILE_SIZE;
-                int yJ = j * Constants.BITMAP_TILE_SIZE;
-                sprites[i][j] = new Rect(xI, yJ, xI + Constants.BITMAP_TILE_SIZE, yJ + Constants.BITMAP_TILE_SIZE);
+        for (int i = 0; i < sprites.length; i++) {
+            for (int j = 0; j < sprites[0].length; j++) {
+
+                int sx = j * Constants.BITMAP_TILE_SIZE;
+                int sy = i * Constants.BITMAP_TILE_SIZE;
+
+                sprites[i][j] = new Rect(sx, sy, sx + Constants.BITMAP_TILE_SIZE, sy + Constants.BITMAP_TILE_SIZE);
+                System.out.println(sprites[i][j]);
             }
         }
     }
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
-        canvas.drawBitmap(image, sprites[0][0], display, paint);
+        canvas.drawBitmap(image, sprites[0][currentFrame], display, paint);
     }
 
     @Override
     public void update(float delta) {
+
+        long curr = System.currentTimeMillis();
+        if (Constants.ANIMATION_FRAME_TIME <= curr - lastFrameMillis) {
+            currentFrame++;
+            lastFrameMillis = curr;
+            if (sprites[0].length <= currentFrame) {
+                currentFrame = 0;
+            }
+        }
 
         // velocity.y -= (Constants.GRAVITY * delta);
 
