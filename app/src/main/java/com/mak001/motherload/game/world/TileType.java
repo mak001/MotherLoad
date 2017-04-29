@@ -1,11 +1,7 @@
 package com.mak001.motherload.game.world;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 
-import com.mak001.motherload.R;
 import com.mak001.motherload.game.Constants;
 
 /**

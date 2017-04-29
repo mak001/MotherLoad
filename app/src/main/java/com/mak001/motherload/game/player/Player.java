@@ -49,16 +49,7 @@ public class Player extends Locatable implements Renderable, Updatable {
             velocity.y = -Constants.MAX_FALL_SPEED;
         }
 
-        // Vector2 oldLoc = getLocation().cpy();
         Tile collide = null;
-
-        // velocity.y -= (Constants.GRAVITY * delta);
-
-        if (Constants.MAX_FALL_SPEED < velocity.y) {
-            velocity.y = Constants.MAX_FALL_SPEED;
-        } else if (velocity.y < -Constants.MAX_FALL_SPEED) {
-            velocity.y = -Constants.MAX_FALL_SPEED;
-        }
 
         float vx = velocity.x * Constants.MOVE_SPEED_X * delta;
         float vy = velocity.y * Constants.MOVE_SPEED_Y * delta;
