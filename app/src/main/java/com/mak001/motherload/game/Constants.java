@@ -1,7 +1,10 @@
 package com.mak001.motherload.game;
 
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import com.mak001.motherload.R;
 import com.mak001.motherload.game.player.Player;
 import com.mak001.motherload.game.world.World;
 
@@ -10,6 +13,10 @@ import com.mak001.motherload.game.world.World;
  */
 
 public class Constants {
+
+    // tileset stuff
+    public static final int BITMAP_TILE_SIZE = 32;
+    public static Bitmap TILESET;
 
     // used for both width and height 96 = (96 X 96)
     public static final int TILE_SIZE = 96;

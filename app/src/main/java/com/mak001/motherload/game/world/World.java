@@ -3,6 +3,8 @@ package com.mak001.motherload.game.world;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 
 import com.mak001.motherload.game.Camera;
 import com.mak001.motherload.game.Constants;
@@ -40,9 +42,13 @@ public class World implements Renderable {
                     if (Methods.between(Math.floor(camera.getX() - Constants.TILE_SIZE), Math.ceil(camera.getX() + Constants.SCREEN_WIDTH + Constants.TILE_SIZE), t.getX()) &&
                             Methods.between(Math.floor(camera.getY() - Constants.TILE_SIZE), Math.ceil(camera.getY() + Constants.SCREEN_HEIGHT + Constants.TILE_SIZE), t.getY())) {
 
-                        Bitmap image = t.getImage();
+                        Rect image = t.getImage();
                         if (image != null) {
-                            canvas.drawBitmap(image, t.getX() - camera.getX(), t.getY() - camera.getY(), paint);
+                            float adjustedX = t.getX() - camera.getX();
+                            float adjustedY = t.getY() - camera.getY();
+
+                            RectF adj = new RectF(adjustedX, adjustedY, adjustedX + Constants.TILE_SIZE, adjustedY + Constants.TILE_SIZE);
+                            canvas.drawBitmap(Constants.TILESET, image, adj, paint);
                         }
                     }
                 }
@@ -96,7 +102,6 @@ public class World implements Renderable {
         return tiles;
     }
 
-
     public void generate(int height) {
         // TODO - generate TileTypes within their given range
         for (int x = 0; x < tiles.length; x++) {
@@ -108,7 +113,7 @@ public class World implements Renderable {
                 float chance = (float) Math.random();
 
                 for (int i = 0; i < TileType.values().length; i++) {
-                    TileType curr = TileType.getIndex(i);
+                    TileType curr = TileType.values()[i];
 
                     // skips default TitleType (so it does not override previous types)
                     if (curr != TileType.getDefault()) {
@@ -123,4 +128,5 @@ public class World implements Renderable {
 
         lastGeneratedLayer += height;
     }
+
 }

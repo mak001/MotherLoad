@@ -31,8 +31,6 @@ public class Player extends Locatable implements Renderable, Updatable {
 
         image = BitmapFactory.decodeResource(Constants.RESOURCES, R.drawable.player);
         image = Bitmap.createScaledBitmap(image, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE, false);
-
-
     }
 
     @Override
@@ -103,11 +101,12 @@ public class Player extends Locatable implements Renderable, Updatable {
     }
 
     private boolean closer(Locatable a, Locatable b) {
-        return closer(this, a, b);
+        return closer(this, Constants.PLAYER_SIZE, a, Constants.TILE_SIZE, b, Constants.TILE_SIZE);
     }
 
-    private boolean closer(Locatable loc, Locatable a, Locatable b) {
-        return loc.getX() - a.getX() < loc.getX() - b.getX() && loc.getY() - a.getY() < loc.getY() - b.getY();
+    private boolean closer(Locatable loc, int locSize, Locatable a, int sizeA, Locatable b, int sizeB) {
+        return (loc.getX() + (locSize / 2)) - (a.getX() + (sizeA / 2)) < (loc.getX() + (locSize / 2)) - (b.getX() + (sizeB / 2)) &&
+                (loc.getY() + (locSize / 2)) - (a.getY() + (sizeA / 2)) < (loc.getY() + (locSize / 2)) - (b.getY() + (sizeB / 2));
     }
 
     private float[] sweptAABB(float vx, float vy, float x2, float y2) {

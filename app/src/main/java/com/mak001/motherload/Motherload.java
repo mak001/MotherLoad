@@ -1,6 +1,7 @@
 package com.mak001.motherload;
 
 import android.app.Activity;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +19,10 @@ public class Motherload extends Activity {
         super.onCreate(savedInstanceState);
 
         Constants.RESOURCES = getResources();
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        Constants.TILESET = BitmapFactory.decodeResource(getResources(), R.drawable.tiles, options);
 
         panel = new GamePanel(this);
         setContentView(panel);

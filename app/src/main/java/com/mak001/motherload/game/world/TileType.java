@@ -2,6 +2,8 @@ package com.mak001.motherload.game.world;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.Rect;
 
 import com.mak001.motherload.R;
 import com.mak001.motherload.game.Constants;
@@ -9,83 +11,36 @@ import com.mak001.motherload.game.Constants;
 /**
  * Created by Matthew on 2/23/2017.
  */
-
 public enum TileType {
+    AIR(0.05f, 0), DIRT(0.85f, 1);
 
-    AIR(0.05f),
-    DIRT(0.85f, new int[]{R.drawable.tiles_dirt, R.drawable.tiles_dirt_2});
-
+    // variables for tile
     private final int minDepth, maxDepth;
     private final int hardness;
     private final int damage;
-
     private final float chance;
+    private final int imageID;
 
-    private final Bitmap[] images;
-
-
-    TileType(float chance) {
-        this(chance, -1);
-    }
+    private Rect image;
 
     TileType(float chance, int imageID) {
-        this(0, chance, imageID);
-    }
-
-    TileType(float chance, int[] imageIDs) {
-        this(0, chance, imageIDs);
-    }
-
-    TileType(int minDepth, float chance, int imageID) {
-        this(minDepth, 0, 0, chance, imageID);
-    }
-
-    TileType(int minDepth, float chance, int[] imageIDs) {
-        this(minDepth, 0, 0, chance, imageIDs);
-    }
-
-    TileType(int minDepth, int maxDepth, int hardness, float chance, int imageID) {
-        this(minDepth, maxDepth, hardness, 0, chance, imageID);
-    }
-
-    TileType(int minDepth, int maxDepth, int hardness, float chance, int[] imageIDs) {
-        this(minDepth, maxDepth, hardness, 0, chance, imageIDs);
+        this(0, 0, 0, 0, chance, imageID);
     }
 
     TileType(int minDepth, int maxDepth, int hardness, int damage, float chance, int imageID) {
-        this(minDepth, maxDepth, hardness, damage, chance, new int[]{imageID});
-    }
-
-    TileType(int minDepth, int maxDepth, int hardness, int damage, float chance, int[] imageIDs) {
 
         this.minDepth = minDepth;
-        this.hardness = hardness;
         this.maxDepth = maxDepth;
+
+        this.hardness = hardness;
         this.damage = damage;
         this.chance = chance;
 
-        images = new Bitmap[imageIDs.length];
-
-        for (int i = 0; i < imageIDs.length; i++) {
-            if (imageIDs[i] == -1) {
-                images[i] = null;
-            } else {
-                Bitmap image = BitmapFactory.decodeResource(Constants.RESOURCES, imageIDs[i]);
-                images[i] = Bitmap.createScaledBitmap(image, Constants.TILE_SIZE, Constants.TILE_SIZE, false);
-            }
-        }
-    }
-
-    public static TileType getIndex(int i) {
-        return TileType.values()[i];
+        this.imageID = imageID;
     }
 
     public static TileType getDefault() {
-        return TileType.DIRT;
-    }
-
-    public int getImageID() {
-        return (int) (Math.random() * images.length);
+        return DIRT;
     }
 
     public int getMinDepth() {
@@ -108,10 +63,16 @@ public enum TileType {
         return chance;
     }
 
-    public Bitmap getImage(int index) {
-        if (images.length <= index)
-            index = images.length - 1;
-        return images[index];
-    }
+    public Rect getImage() {
+        if (image != null) return image;
 
+        int TILES_IN_X = Constants.TILESET.getWidth() / Constants.BITMAP_TILE_SIZE;
+
+        int x = (imageID % TILES_IN_X) * Constants.BITMAP_TILE_SIZE;
+        int y = ((int) Math.floor(imageID / TILES_IN_X)) * Constants.BITMAP_TILE_SIZE;
+
+        image = new Rect(x, y, x + Constants.BITMAP_TILE_SIZE, y + Constants.BITMAP_TILE_SIZE);
+
+        return image;
+    }
 }
