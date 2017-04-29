@@ -73,6 +73,7 @@ public class Player extends Locatable implements Renderable, Updatable {
     @Override
     public void update(float delta) {
 
+        // frames
         long curr = System.currentTimeMillis();
         if (Constants.ANIMATION_FRAME_TIME <= curr - lastFrameMillis) {
             currentFrame++;
@@ -82,8 +83,9 @@ public class Player extends Locatable implements Renderable, Updatable {
             }
         }
 
-        // velocity.y -= (Constants.GRAVITY * delta);
-
+        // gravity
+        // TODO - velocity.y -= (Constants.GRAVITY * delta);
+        // clamp gravity force (terminal velocity)
         if (Constants.MAX_FALL_SPEED < velocity.y) {
             velocity.y = Constants.MAX_FALL_SPEED;
         } else if (velocity.y < -Constants.MAX_FALL_SPEED) {

@@ -119,7 +119,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         Paint paint = new Paint();
 
-        canvas.drawColor(Color.BLACK);
+        canvas.drawColor(Constants.SKY_COLOR);
 
         Constants.WORLD.draw(canvas, paint);
         player.draw(canvas, paint);
@@ -133,7 +133,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         currentState = s;
     }
 
-    public enum State {
+    private enum State {
         TITLE_SCREEN, PLAYING, SHOP_OPEN
     }
 }

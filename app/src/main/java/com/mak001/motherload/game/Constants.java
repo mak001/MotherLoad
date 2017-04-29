@@ -3,6 +3,7 @@ package com.mak001.motherload.game;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 
 import com.mak001.motherload.R;
 import com.mak001.motherload.game.player.Player;
@@ -30,6 +31,8 @@ public class Constants {
 
     public static final float GRAVITY = -100f;
     public static final int MAX_FALL_SPEED = (int) (MOVE_SPEED_Y * TILE_SIZE);
+
+    public static final int SKY_COLOR = Color.rgb(0, 124, 255);
 
     public static Resources RESOURCES;
     public static GamePanel GAME_PANEL;
