@@ -14,5 +14,8 @@ public class Camera extends Locatable {
 
     public Camera(int x, int y) {
         super(x, y);
+
+        Constants.TILES_IN_SCREEN_WIDTH = (int) Math.ceil(Constants.SCREEN_WIDTH / Constants.TILE_SIZE) + 1;
+        Constants.TILES_IN_SCREEN_HEIGHT = (int) Math.ceil(Constants.SCREEN_HEIGHT / Constants.TILE_SIZE) + 1;
     }
 }

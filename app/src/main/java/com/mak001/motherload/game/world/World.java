@@ -7,7 +7,6 @@ import android.graphics.RectF;
 
 import com.mak001.motherload.game.Camera;
 import com.mak001.motherload.game.Constants;
-import com.mak001.motherload.game.Methods;
 import com.mak001.motherload.game.helpers.Renderable;
 
 import java.util.ArrayList;
@@ -32,26 +31,29 @@ public class World implements Renderable {
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
-        // TODO narrow loops
-        for (Tile[] tile : tiles) {
-            for (int y = 0; y < Math.min(lastGeneratedLayer, tiles[0].length); y++) {
-                if (tile[y] != null) {
-                    Tile t = tile[y];
+        int camLeft = (int) Math.floor(camera.getX() / Constants.TILE_SIZE) - 1;
+        int camRight = camLeft + Constants.TILES_IN_SCREEN_WIDTH + 2;
 
-                    if (Methods.between(Math.floor(camera.getX() - Constants.TILE_SIZE), Math.ceil(camera.getX() + Constants.SCREEN_WIDTH + Constants.TILE_SIZE), t.getX()) &&
-                            Methods.between(Math.floor(camera.getY() - Constants.TILE_SIZE), Math.ceil(camera.getY() + Constants.SCREEN_HEIGHT + Constants.TILE_SIZE), t.getY())) {
+        int camTop = (int) Math.floor(camera.getY() / Constants.TILE_SIZE) - 1;
+        int camBottom = camTop + Constants.TILES_IN_SCREEN_HEIGHT;
 
-                        Rect image = t.getImage();
-                        if (image != null) {
-                            float adjustedX = t.getX() - camera.getX();
-                            float adjustedY = t.getY() - camera.getY();
+        // loops through all tiles on screen
+        for (int x = camLeft; x <= camRight; x++) {
+            for (int y = camTop; y <= camBottom; y++) {
+                // bounds check
+                if (x < 0 || y < 0 || tiles.length <= x || tiles[0].length <= y) continue;
 
-                            RectF adj = new RectF(adjustedX, adjustedY, adjustedX + Constants.TILE_SIZE, adjustedY + Constants.TILE_SIZE);
-                            canvas.drawBitmap(Constants.TILESET, image, adj, paint);
-                        }
+                Tile t = tiles[x][y];
+                if (t != null) {
+                    Rect image = t.getImage();
+                    if (image != null) {
+                        float adjustedX = t.getX() - camera.getX();
+                        float adjustedY = t.getY() - camera.getY();
+
+                        RectF adj = new RectF(adjustedX, adjustedY, adjustedX + Constants.TILE_SIZE, adjustedY + Constants.TILE_SIZE);
+                        canvas.drawBitmap(Constants.TILESET, image, adj, paint);
                     }
                 }
-
             }
         }
     }

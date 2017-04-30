@@ -95,7 +95,7 @@ public class Player extends Locatable implements Renderable, Updatable {
         if (Constants.MAX_FALL_SPEED < velocity.y) {
             velocity.y = Constants.MAX_FALL_SPEED;
         }
-        System.out.println("G = " + Constants.MAX_FALL_SPEED + " :: V.y = " + velocity.getY());
+        // System.out.println("G = " + Constants.MAX_FALL_SPEED + " :: V.y = " + velocity.getY());
 
         float vx = velocity.x * Constants.MOVE_SPEED_X * delta;
         float vy = velocity.y * Constants.MOVE_SPEED_Y * delta;

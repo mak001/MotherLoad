@@ -38,4 +38,6 @@ public class Constants {
 
     public static int SCREEN_WIDTH;
     public static int SCREEN_HEIGHT;
+    public static int TILES_IN_SCREEN_WIDTH;
+    public static int TILES_IN_SCREEN_HEIGHT;
 }
