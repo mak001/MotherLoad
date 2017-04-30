@@ -66,6 +66,8 @@ public class Player extends Locatable implements Renderable, Updatable {
 
     public void move(Vector2 vec, float delta) {
         velocity.x = vec.getX() * (Constants.MOVE_SPEED_X * delta);
+
+        // TODO - keep positive y velocity (for gravity)
         velocity.y = vec.getY() * (Constants.MOVE_SPEED_Y * delta);
     }
 
@@ -88,13 +90,12 @@ public class Player extends Locatable implements Renderable, Updatable {
         }
 
         // gravity
-        // TODO - velocity.y -= (Constants.GRAVITY * delta);
+        velocity.y += (Constants.GRAVITY * delta);
         // clamp gravity force (terminal velocity)
         if (Constants.MAX_FALL_SPEED < velocity.y) {
             velocity.y = Constants.MAX_FALL_SPEED;
-        } else if (velocity.y < -Constants.MAX_FALL_SPEED) {
-            velocity.y = -Constants.MAX_FALL_SPEED;
         }
+        System.out.println("G = " + Constants.MAX_FALL_SPEED + " :: V.y = " + velocity.getY());
 
         float vx = velocity.x * Constants.MOVE_SPEED_X * delta;
         float vy = velocity.y * Constants.MOVE_SPEED_Y * delta;
@@ -116,8 +117,11 @@ public class Player extends Locatable implements Renderable, Updatable {
             float newVX = dotprod * times[closestTime][2];
             float newVY = dotprod * times[closestTime][1];
 
+            float nX = vx * times[closestTime][0] * times[closestTime][0];
+            float nY = vy * times[closestTime][0] * times[closestTime][0];
+
             // TODO - clamp if second collision
-            location.add((vx * times[closestTime][0] * times[closestTime][0]) + newVX, (vy * times[closestTime][0] * times[closestTime][0]) + newVY);
+            location.add(nX + newVX, nY + newVY);
         }
     }
 
@@ -154,35 +158,45 @@ public class Player extends Locatable implements Renderable, Updatable {
         // entry time, normal x, normal y
         float[] returned = new float[]{1f, 0f, 0f};
 
-        float xInvEntry, yInvEntry;
-        float xEntry, yEntry;
-
-        if (vx > 0f) {
+        float xInvEntry, xInvExit, yInvEntry, yInvExit;
+        // find the distance between the objects on the near and far sides for both x and y
+        if (vx > 0.0f) {
             xInvEntry = x2 - (x1 + size1);
+            xInvExit = (x2 + size2) - x1;
         } else {
             xInvEntry = (x2 + size2) - x1;
+            xInvExit = x2 - (x1 + size1);
         }
 
-        if (vy > 0f) {
+        if (vy > 0.0f) {
             yInvEntry = y2 - (y1 + size1);
+            yInvExit = (y2 + size2) - y1;
         } else {
             yInvEntry = (y2 + size2) - y1;
+            yInvExit = y2 - (y1 + size1);
         }
 
-        if (vx == 0f) {
-            xEntry = Float.MIN_VALUE;
+
+        float xEntry, xExit, yEntry, yExit;
+        // find time of collision and time of leaving for each axis (if statement is to prevent divide by zero)
+        if (vx == 0.0f) {
+            xEntry = -Float.MAX_VALUE;
+            xExit = Float.MAX_VALUE;
         } else {
-            xEntry = (xInvEntry / size2) / vx;
+            xEntry = xInvEntry / vx;
+            xExit = xInvExit / vx;
         }
 
-        if (vy == 0f) {
-            yEntry = Float.MIN_VALUE;
+        if (vy == 0.0f) {
+            yEntry = -Float.MAX_VALUE;
+            yExit = Float.MAX_VALUE;
         } else {
-            yEntry = (yInvEntry / size2) / vy;
+            yEntry = yInvEntry / vy;
+            yExit = yInvExit / vy;
         }
 
-        float entryTime = Math.abs(Math.max(xEntry, yEntry));
-        float exitTime = Math.abs(Math.min(xEntry, yEntry));
+        float entryTime = Math.max(xEntry, yEntry);
+        float exitTime = Math.min(xExit, yExit);
 
         if (entryTime > exitTime || xEntry < 0f && yEntry < 0f || xEntry > 1f || yEntry > 1f) {
             return returned;
@@ -206,7 +220,7 @@ public class Player extends Locatable implements Renderable, Updatable {
                     returned[2] = -1f;
                 }
             }
-            returned[0] = (entryTime * size2);
+            returned[0] = entryTime;
             return returned;
         }
     }

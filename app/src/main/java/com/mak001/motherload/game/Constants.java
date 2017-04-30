@@ -26,8 +26,8 @@ public class Constants {
     public static final float MOVE_SPEED_X = 150;
     public static final float MOVE_SPEED_Y = 250;
 
-    public static final float GRAVITY = -100f;
-    public static final int MAX_FALL_SPEED = (int) (MOVE_SPEED_Y * TILE_SIZE);
+    public static final float GRAVITY = 100f;
+    public static final int MAX_FALL_SPEED = (int) (GRAVITY * TILE_SIZE);
 
     public static final int SKY_COLOR = Color.rgb(0, 124, 255);
 
