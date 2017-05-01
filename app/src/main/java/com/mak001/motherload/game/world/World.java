@@ -65,6 +65,14 @@ public class World implements Renderable {
         return null;
     }
 
+    public ArrayList<Tile> getTilesOnX(float x1, float x2, float y) {
+        return getTilesBetween(x1, y, x2, y);
+    }
+
+    public ArrayList<Tile> getTilesOnY(float x, float y1, float y2) {
+        return getTilesBetween(x, y1, x, y2);
+    }
+
     public ArrayList<Tile> getTilesBetween(float x1, float y1, float x2, float y2) {
         return getTilesBetween(x1, y1, x2, y2, false);
     }
@@ -94,6 +102,7 @@ public class World implements Renderable {
             for (int j = 0; j <= tilesBetweenY; j++) {
                 Tile t = getTileAt(snappedX1 + i, snappedY1 + j);
 
+                // skips null and air if include air is true
                 if (t != null && (includeAir || !t.getTileType().equals(TileType.AIR))) {
                     tiles.add(t);
                 }
@@ -118,9 +127,15 @@ public class World implements Renderable {
 
                     // skips default TitleType (so it does not override previous types)
                     if (curr != TileType.getDefault()) {
-                        if (chance <= curr.getChance()) {
-                            tiles[x][y].setTileType(curr);
+                        if (curr.getMinDepth() <= y && y <= curr.getMaxDepth()) {
+                            if (chance <= curr.getChance()) {
+                                tiles[x][y].setTileType(curr);
 
+                            }
+                        } else if (curr.getMinDepth() - 25 <= y && y <= curr.getMaxDepth() + 25) {
+                            if (chance <= curr.getChance() / 2) {
+                                tiles[x][y].setTileType(curr);
+                            }
                         }
                     }
                 }

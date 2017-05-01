@@ -60,7 +60,7 @@ public class Player extends Locatable implements Renderable, Updatable {
                 int sy = i * Constants.BITMAP_TILE_SIZE;
 
                 sprites[i][j] = new Rect(sx, sy, sx + Constants.BITMAP_TILE_SIZE, sy + Constants.BITMAP_TILE_SIZE);
-                System.out.println(sprites[i][j]);
+                // System.out.println(sprites[i][j]);
             }
         }
     }
@@ -118,30 +118,34 @@ public class Player extends Locatable implements Renderable, Updatable {
             float newVX = dotprod * times[closestTime][2];
             float newVY = dotprod * times[closestTime][1];
 
-            if (Methods.isZero(newVX)) newVX = 0;
-            if (Methods.isZero(newVY)) newVY = 0;
-
             float nX = vx * times[closestTime][0] * times[closestTime][0];
             float nY = vy * times[closestTime][0] * times[closestTime][0];
 
-            // System.out.println("orig: (" + newVX + ", " + newVY + ")");
+            // System.out.println("(" + (nX + newVX) + ", " + (nY+ newVY) + ")");
 
+            ArrayList<Tile> tiles2 = null;
+            if (newVY == 0) {
+                tiles2 = Constants.WORLD.getTilesOnX(getX() + nX, getX() + nX + newVX, getY() + nY);
+            } else if (newVX == 0) {
+                tiles2 = Constants.WORLD.getTilesOnY(getX() + nX, getY() + nY, getY() + nY + newVY);
+            }
 
-            ArrayList<Tile> tiles2 = Constants.WORLD.getTilesBetween(getX() + nX, getY() + nY, getX() + nX + newVX, getY() + nY + newVY);
-            if (0 < tiles2.size()) {
+            if (tiles2 == null || 0 < tiles2.size()) {
 
                 float[][] times2 = getTimes(newVX, newVY, tiles2);
                 int closestTime2 = getNearest(times2);
 
-                System.out.println("Collision: " + times2[closestTime2][0] + " :: (" + times2[closestTime2][1] + ", " + times2[closestTime2][2] + ")");
+                if (times2[closestTime2][0] != 1.0f) {
+                    newVX *= times2[closestTime2][0];
+                    newVY *= times2[closestTime2][0];
+                }
 
-                newVX *= times2[closestTime2][0];
-                newVY *= times2[closestTime2][0];
-                // System.out.println("modded: (" + newVX + ", " + newVY + ")");
             }
-
+            // System.out.println("(" + (nX + newVX) + ", " + (nY+ newVY) + ")");
             // TODO - clamp if second collision
+
             location.add(nX + newVX, nY + newVY);
+            // System.out.println("------");
         }
     }
 

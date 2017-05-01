@@ -20,7 +20,7 @@ public class Constants {
 
     // used for both width and height 96 = (96 X 96)
     public static final int TILE_SIZE = 96;
-    public static final int PLAYER_SIZE = 88;
+    public static final int PLAYER_SIZE = 90;
 
     // move sped multiplier for player
     public static final float MOVE_SPEED_X = 150;
