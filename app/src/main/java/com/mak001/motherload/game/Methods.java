@@ -14,4 +14,13 @@ public class Methods {
         return a < x && x < b;
     }
 
+    // for zeroing a float that is within +/- 0.003
+    public static boolean isZero(float value) {
+        return isZero(value, 0.003f);
+    }
+
+    public static boolean isZero(float value, float threshold) {
+        return value >= -threshold && value <= threshold;
+    }
+
 }

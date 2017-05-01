@@ -10,6 +10,7 @@ import android.graphics.RectF;
 import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.R;
 import com.mak001.motherload.game.Constants;
+import com.mak001.motherload.game.Methods;
 import com.mak001.motherload.game.helpers.Locatable;
 import com.mak001.motherload.game.helpers.Renderable;
 import com.mak001.motherload.game.helpers.Updatable;
@@ -117,8 +118,27 @@ public class Player extends Locatable implements Renderable, Updatable {
             float newVX = dotprod * times[closestTime][2];
             float newVY = dotprod * times[closestTime][1];
 
+            if (Methods.isZero(newVX)) newVX = 0;
+            if (Methods.isZero(newVY)) newVY = 0;
+
             float nX = vx * times[closestTime][0] * times[closestTime][0];
             float nY = vy * times[closestTime][0] * times[closestTime][0];
+
+            // System.out.println("orig: (" + newVX + ", " + newVY + ")");
+
+
+            ArrayList<Tile> tiles2 = Constants.WORLD.getTilesBetween(getX() + nX, getY() + nY, getX() + nX + newVX, getY() + nY + newVY);
+            if (0 < tiles2.size()) {
+
+                float[][] times2 = getTimes(newVX, newVY, tiles2);
+                int closestTime2 = getNearest(times2);
+
+                System.out.println("Collision: " + times2[closestTime2][0] + " :: (" + times2[closestTime2][1] + ", " + times2[closestTime2][2] + ")");
+
+                newVX *= times2[closestTime2][0];
+                newVY *= times2[closestTime2][0];
+                // System.out.println("modded: (" + newVX + ", " + newVY + ")");
+            }
 
             // TODO - clamp if second collision
             location.add(nX + newVX, nY + newVY);
@@ -126,11 +146,15 @@ public class Player extends Locatable implements Renderable, Updatable {
     }
 
     private float[][] getTimes(float vx, float vy, ArrayList<Tile> tiles) {
+        return getTimes(getX(), getY(), vx, vy, tiles);
+    }
+
+    private float[][] getTimes(float x1, float y1, float vx, float vy, ArrayList<Tile> tiles) {
         float[][] times = new float[tiles.size()][3];
 
         for (int i = 0; i < tiles.size(); i++) {
             Tile t = tiles.get(i);
-            times[i] = sweptAABB(vx, vy, t.getX(), t.getY());
+            times[i] = sweptAABB(x1, y1, vx, vy, t.getX(), t.getY());
         }
         return times;
     }
@@ -145,12 +169,8 @@ public class Player extends Locatable implements Renderable, Updatable {
         return closestTime;
     }
 
-    private float[] sweptAABB(float vx, float vy, float x2, float y2) {
-        return sweptAABB(vx, vy, x2, y2, Constants.TILE_SIZE);
-    }
-
-    private float[] sweptAABB(float vx, float vy, float x2, float y2, int size2) {
-        return sweptAABB(getX(), getY(), vx, vy, Constants.PLAYER_SIZE, x2, y2, size2);
+    private float[] sweptAABB(float x1, float y1, float vx, float vy, float x2, float y2) {
+        return sweptAABB(x1, y1, vx, vy, Constants.PLAYER_SIZE, x2, y2, Constants.TILE_SIZE);
     }
 
     private float[] sweptAABB(float x1, float y1, float vx, float vy, int size1, float x2, float y2, int size2) {
