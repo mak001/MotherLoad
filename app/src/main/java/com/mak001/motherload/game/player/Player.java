@@ -121,6 +121,9 @@ public class Player extends Locatable implements Renderable, Updatable {
             float nX = vx * times[closestTime][0] * times[closestTime][0];
             float nY = vy * times[closestTime][0] * times[closestTime][0];
 
+            newVX = Methods.fixZero(newVX);
+            newVY = Methods.fixZero(newVY);
+
             // System.out.println("(" + (nX + newVX) + ", " + (nY+ newVY) + ")");
 
             ArrayList<Tile> tiles2 = null;
