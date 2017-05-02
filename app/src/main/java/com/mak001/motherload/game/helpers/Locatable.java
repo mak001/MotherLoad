@@ -8,10 +8,10 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class Locatable {
 
-    protected Vector2 location;
+    protected final Vector2 location;
 
     protected Locatable() {
-        location = Vector2.Zero();
+        location = new Vector2();
     }
 
     public Locatable(float x, float y) {

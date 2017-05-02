@@ -1,12 +1,12 @@
 package com.mak001.motherload.game.world;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 
 import com.mak001.motherload.game.Camera;
 import com.mak001.motherload.game.Constants;
-import com.mak001.motherload.game.Methods;
 import com.mak001.motherload.game.helpers.Renderable;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class World implements Renderable {
 
-    private Tile[][] tiles;
+    private final Tile[][] tiles;
     private int lastGeneratedLayer = 0;
 
     private final Camera camera;
@@ -31,22 +31,29 @@ public class World implements Renderable {
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
-        // TODO narrow loops
-        for (Tile[] tile : tiles) {
-            for (int y = 0; y < Math.min(lastGeneratedLayer, tiles[0].length); y++) {
-                if (tile[y] != null) {
-                    Tile t = tile[y];
+        int camLeft = (int) Math.floor(camera.getX() / Constants.TILE_SIZE) - 1;
+        int camRight = camLeft + Constants.TILES_IN_SCREEN_WIDTH + 2;
 
-                    if (Methods.between(Math.floor(camera.getX() - Constants.TILE_SIZE), Math.ceil(camera.getX() + Constants.SCREEN_WIDTH + Constants.TILE_SIZE), t.getX()) &&
-                            Methods.between(Math.floor(camera.getY() - Constants.TILE_SIZE), Math.ceil(camera.getY() + Constants.SCREEN_HEIGHT + Constants.TILE_SIZE), t.getY())) {
+        int camTop = (int) Math.floor(camera.getY() / Constants.TILE_SIZE) - 1;
+        int camBottom = camTop + Constants.TILES_IN_SCREEN_HEIGHT;
 
-                        Bitmap image = t.getImage();
-                        if (image != null) {
-                            canvas.drawBitmap(image, t.getX() - camera.getX(), t.getY() - camera.getY(), paint);
-                        }
+        // loops through all tiles on screen
+        for (int x = camLeft; x <= camRight; x++) {
+            for (int y = camTop; y <= camBottom; y++) {
+                // bounds check
+                if (x < 0 || y < 0 || tiles.length <= x || tiles[0].length <= y) continue;
+
+                Tile t = tiles[x][y];
+                if (t != null) {
+                    Rect image = t.getImage();
+                    if (image != null) {
+                        float adjustedX = t.getX() - camera.getX();
+                        float adjustedY = t.getY() - camera.getY();
+
+                        RectF adj = new RectF(adjustedX, adjustedY, adjustedX + Constants.TILE_SIZE, adjustedY + Constants.TILE_SIZE);
+                        canvas.drawBitmap(Constants.TILESET, image, adj, paint);
                     }
                 }
-
             }
         }
     }
@@ -58,10 +65,22 @@ public class World implements Renderable {
         return null;
     }
 
+    public ArrayList<Tile> getTilesOnX(float x1, float x2, float y) {
+        return getTilesBetween(x1, y, x2, y);
+    }
+
+    public ArrayList<Tile> getTilesOnY(float x, float y1, float y2) {
+        return getTilesBetween(x, y1, x, y2);
+    }
+
     public ArrayList<Tile> getTilesBetween(float x1, float y1, float x2, float y2) {
+        return getTilesBetween(x1, y1, x2, y2, false);
+    }
+
+    public ArrayList<Tile> getTilesBetween(float x1, float y1, float x2, float y2, boolean includeAir) {
         ArrayList<Tile> tiles = new ArrayList<>();
 
-        // probably never gonna happen (gravity), but a good sanity check
+        // sanity check
         if (x1 == x2 && y1 == y2) {
             return tiles;
         }
@@ -83,7 +102,8 @@ public class World implements Renderable {
             for (int j = 0; j <= tilesBetweenY; j++) {
                 Tile t = getTileAt(snappedX1 + i, snappedY1 + j);
 
-                if (t != null) {
+                // skips null and air if include air is true
+                if (t != null && (includeAir || !t.getTileType().equals(TileType.AIR))) {
                     tiles.add(t);
                 }
             }
@@ -91,8 +111,6 @@ public class World implements Renderable {
 
         return tiles;
     }
-
-
 
     public void generate(int height) {
         // TODO - generate TileTypes within their given range
@@ -105,13 +123,19 @@ public class World implements Renderable {
                 float chance = (float) Math.random();
 
                 for (int i = 0; i < TileType.values().length; i++) {
-                    TileType curr = TileType.getIndex(i);
+                    TileType curr = TileType.values()[i];
 
                     // skips default TitleType (so it does not override previous types)
                     if (curr != TileType.getDefault()) {
-                        if (chance <= curr.getChance()) {
-                            tiles[x][y].setTileType(curr);
+                        if (curr.getMinDepth() <= y && y <= curr.getMaxDepth()) {
+                            if (chance <= curr.getChance()) {
+                                tiles[x][y].setTileType(curr);
 
+                            }
+                        } else if (curr.getMinDepth() - 25 <= y && y <= curr.getMaxDepth() + 25) {
+                            if (chance <= curr.getChance() / 2) {
+                                tiles[x][y].setTileType(curr);
+                            }
                         }
                     }
                 }
@@ -120,4 +144,5 @@ public class World implements Renderable {
 
         lastGeneratedLayer += height;
     }
+
 }

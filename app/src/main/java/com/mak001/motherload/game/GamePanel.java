@@ -3,14 +3,11 @@ package com.mak001.motherload.game;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.badlogic.gdx.math.Vector2;
 import com.mak001.motherload.game.player.JoyStick;
 import com.mak001.motherload.game.player.Player;
 import com.mak001.motherload.game.world.World;
@@ -23,7 +20,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private GameThread thread;
 
     private JoyStick joyStick;
-
+    private Player player;
     private Camera camera;
 
     private SoundManager soundManager;
@@ -43,7 +40,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         camera = new Camera();
 
-        Constants.PLAYER = new Player(Constants.PLAYER_SIZE, -(Constants.PLAYER_SIZE + 1));
+        player = new Player(Constants.PLAYER_SIZE, -(Constants.PLAYER_SIZE + 1));
 
         Constants.WORLD = new World(camera);
         joyStick = new JoyStick(0, 0, 256);
@@ -106,9 +103,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update(float delta) {
-        Constants.PLAYER.move(joyStick.getDirection(), delta);
-        Constants.PLAYER.update(delta);
-        camera.setPos((Constants.PLAYER.getX() + Constants.PLAYER_SIZE / 2) - (Constants.SCREEN_WIDTH / 2), (Constants.PLAYER.getY() + Constants.PLAYER_SIZE / 2) - (Constants.SCREEN_HEIGHT / 2));
+        player.move(joyStick.getDirection(), delta);
+        player.update(delta);
+        camera.setPos((player.getX() + Constants.PLAYER_SIZE / 2) - (Constants.SCREEN_WIDTH / 2), (player.getY() + Constants.PLAYER_SIZE / 2) - (Constants.SCREEN_HEIGHT / 2));
 
         //System.out.println(player.getLocation() + " :: (" + (camera.getX() + (Constants.SCREEN_WIDTH / 2)) + ", " + (camera.getY() + Constants.SCREEN_HEIGHT / 2) + ")");
     }
@@ -119,14 +116,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         Paint paint = new Paint();
 
-        canvas.drawColor(Color.BLACK);
+        canvas.drawColor(Constants.SKY_COLOR);
 
         Constants.WORLD.draw(canvas, paint);
-        Constants.PLAYER.draw(canvas, paint);
+        player.draw(canvas, paint);
 
         if (currentState.equals(State.PLAYING)) {
             joyStick.draw(canvas, paint);
-            canvas.drawText("(" + Constants.PLAYER.getX() + ", " + Constants.PLAYER.getY() + ")", 50f, 50f, paint);
         }
     }
 
@@ -134,7 +130,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         currentState = s;
     }
 
-    public enum State {
+    private enum State {
         TITLE_SCREEN, PLAYING, SHOP_OPEN
     }
 }
