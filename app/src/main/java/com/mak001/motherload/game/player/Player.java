@@ -129,11 +129,24 @@ public class Player extends Locatable implements Renderable, Updatable {
             ArrayList<Tile> tiles2 = null;
             if (newVY == 0) {
                 tiles2 = Constants.WORLD.getTilesOnX(getX() + nX, getX() + nX + newVX, getY() + nY);
+                if (0 < tiles2.size()) {
+                    System.out.println("Going along X ::" + (getX() + nX) + ", " + (getY() + nY) + "), (" + (getX() + nX + newVX) + ", " + (getY() + nY) + ")");
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < tiles2.size(); i++) {
+                        sb.append(tiles2.get(i));
+                        sb.append(", ");
+                    }
+                    System.out.println(sb.toString());
+                }
             } else if (newVX == 0) {
                 tiles2 = Constants.WORLD.getTilesOnY(getX() + nX, getY() + nY, getY() + nY + newVY);
+                if (0 < tiles2.size())
+                    System.out.println("Going along X ::" + (getX() + nX) + ", " + (getY() + nY) + "), (" + (getX() + nX) + ", " + (getY() + nY + newVY) + ")");
             }
 
-            if (tiles2 == null || 0 < tiles2.size()) {
+            if (tiles2 != null && 0 < tiles2.size()) {
+
+                System.out.println(tiles.size());
 
                 float[][] times2 = getTimes(newVX, newVY, tiles2);
                 int closestTime2 = getNearest(times2);

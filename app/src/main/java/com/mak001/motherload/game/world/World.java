@@ -35,7 +35,7 @@ public class World implements Renderable {
         int camRight = camLeft + Constants.TILES_IN_SCREEN_WIDTH + 2;
 
         int camTop = (int) Math.floor(camera.getY() / Constants.TILE_SIZE) - 1;
-        int camBottom = camTop + Constants.TILES_IN_SCREEN_HEIGHT;
+        int camBottom = camTop + Constants.TILES_IN_SCREEN_HEIGHT + 2;
 
         // loops through all tiles on screen
         for (int x = camLeft; x <= camRight; x++) {
@@ -119,6 +119,12 @@ public class World implements Renderable {
 
                 // set the default TileType
                 tiles[x][y] = new Tile(x * Constants.TILE_SIZE, y * Constants.TILE_SIZE, TileType.getDefault());
+
+                // TODO
+                if ((x == 1 || x == 2) && y == 0) {
+                    tiles[x][y].setTileType(TileType.AIR);
+                    continue;
+                }
 
                 float chance = (float) Math.random();
 
