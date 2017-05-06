@@ -66,10 +66,12 @@ public class World implements Renderable {
     }
 
     public ArrayList<Tile> getTilesOnX(float x1, float x2, float y) {
+        y = (float) Math.floor(y / Constants.TILE_SIZE) * Constants.TILE_SIZE;
         return getTilesBetween(x1, y, x2, y);
     }
 
     public ArrayList<Tile> getTilesOnY(float x, float y1, float y2) {
+        x = (float) Math.floor(x / Constants.TILE_SIZE) * Constants.TILE_SIZE;
         return getTilesBetween(x, y1, x, y2);
     }
 

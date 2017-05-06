@@ -124,43 +124,54 @@ public class Player extends Locatable implements Renderable, Updatable {
             newVX = Methods.fixZero(newVX);
             newVY = Methods.fixZero(newVY);
 
-            // System.out.println("(" + (nX + newVX) + ", " + (nY+ newVY) + ")");
-
             ArrayList<Tile> tiles2 = null;
             if (newVY == 0) {
                 tiles2 = Constants.WORLD.getTilesOnX(getX() + nX, getX() + nX + newVX, getY() + nY);
                 if (0 < tiles2.size()) {
-                    System.out.println("Going along X ::" + (getX() + nX) + ", " + (getY() + nY) + "), (" + (getX() + nX + newVX) + ", " + (getY() + nY) + ")");
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < tiles2.size(); i++) {
-                        sb.append(tiles2.get(i));
-                        sb.append(", ");
-                    }
-                    System.out.println(sb.toString());
+                    System.out.println("Going along X :: (" + (getX() + nX) + ", " + (getY() + nY) + "), (" + (getX() + nX + newVX) + ", " + (getY() + nY) + ")");
                 }
             } else if (newVX == 0) {
                 tiles2 = Constants.WORLD.getTilesOnY(getX() + nX, getY() + nY, getY() + nY + newVY);
-                if (0 < tiles2.size())
-                    System.out.println("Going along X ::" + (getX() + nX) + ", " + (getY() + nY) + "), (" + (getX() + nX) + ", " + (getY() + nY + newVY) + ")");
+                if (0 < tiles2.size()) {
+                    System.out.println("Going along X :: (" + (getX() + nX) + ", " + (getY() + nY) + "), (" + (getX() + nX) + ", " + (getY() + nY + newVY) + ")");
+                }
             }
 
-            if (tiles2 != null && 0 < tiles2.size()) {
+            float newNewVX = 0;
+            float newNewVY = 0;
 
-                System.out.println(tiles.size());
+            if (tiles2 != null && 0 < tiles2.size()) {
 
                 float[][] times2 = getTimes(newVX, newVY, tiles2);
                 int closestTime2 = getNearest(times2);
 
-                if (times2[closestTime2][0] != 1.0f) {
-                    newVX *= times2[closestTime2][0];
-                    newVY *= times2[closestTime2][0];
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < tiles2.size(); i++) {
+                    sb.append(tiles2.get(i));
+                    sb.append(" (");
+                    sb.append(times2[i][0]);
+                    sb.append(") ");
+                }
+                System.out.println(sb.toString());
+
+                if (times2[closestTime2][0] != 1f) {
+                    //newNewVX = newVX * times2[closestTime2][0];
+                    //newNewVY = newVY * times2[closestTime2][0];
                 }
 
+            } else {
+                //newNewVX = newVX;
+                //newNewVY = newVY;
             }
+
+            newNewVX = newVX;
+            newNewVY = newVY;
+
             // System.out.println("(" + (nX + newVX) + ", " + (nY+ newVY) + ")");
+            // System.out.println("new (" + newVX + ", " + newVY + ")");
             // TODO - clamp if second collision
 
-            location.add(nX + newVX, nY + newVY);
+            location.add(nX + newNewVX, nY + newNewVY);
             // System.out.println("------");
         }
     }
