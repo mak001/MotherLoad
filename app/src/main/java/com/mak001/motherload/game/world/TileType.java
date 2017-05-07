@@ -8,11 +8,11 @@ import com.mak001.motherload.game.Constants;
  * Created by Matthew on 2/23/2017.
  */
 public enum TileType {
-    AIR(0.05f, 0),
-    DIRT(0.85f, 1),
-    COPPER(0, 200, 0, 0, 0.2f, 10),
-    TIN(0, 200, 0, 0, 0.1f, 11),
-    GOLD(100, 400, 0, 0, 0.1f, 9);
+    AIR(0.15f, 0),
+    DIRT(1f, 1),
+    COPPER(0, 200, 0, 0, 0.05f, 10),
+    TIN(0, 200, 0, 0, 0.05f, 11),
+    GOLD(100, 400, 0, 0, 0.03f, 9);
 
     // variables for tile
     private final int minDepth, maxDepth;

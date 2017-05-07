@@ -137,8 +137,7 @@ public class Player extends Locatable implements Renderable, Updatable {
                 }
             }
 
-            float newNewVX = 0;
-            float newNewVY = 0;
+            float newNewVX, newNewVY;
 
             if (tiles2 != null && 0 < tiles2.size()) {
 
@@ -154,25 +153,25 @@ public class Player extends Locatable implements Renderable, Updatable {
                 }
                 System.out.println(sb.toString());
 
-                if (times2[closestTime2][0] != 1f) {
-                    //newNewVX = newVX * times2[closestTime2][0];
-                    //newNewVY = newVY * times2[closestTime2][0];
+                if (times2[closestTime2][0] == 1) {
+                    newNewVX = newVX;
+                    newNewVY = newVY;
+                } else {
+                    newNewVX = newVX * times2[closestTime2][0];
+                    newNewVY = newVY * times2[closestTime2][0];
                 }
 
             } else {
-                //newNewVX = newVX;
-                //newNewVY = newVY;
+                newNewVX = newVX;
+                newNewVY = newVY;
             }
 
-            newNewVX = newVX;
-            newNewVY = newVY;
+            if (newVX != newNewVX) System.out.println("VX: " + newVX + " :: " + newNewVX);
+            if (newVY != newNewVY) System.out.println("VY: " + newVY + " :: " + newNewVY);
 
-            // System.out.println("(" + (nX + newVX) + ", " + (nY+ newVY) + ")");
-            // System.out.println("new (" + newVX + ", " + newVY + ")");
             // TODO - clamp if second collision
 
             location.add(nX + newNewVX, nY + newNewVY);
-            // System.out.println("------");
         }
     }
 

@@ -128,7 +128,7 @@ public class World implements Renderable {
                     continue;
                 }
 
-                float chance = (float) Math.random();
+                //float chance = (float) Math.random();
 
                 for (int i = 0; i < TileType.values().length; i++) {
                     TileType curr = TileType.values()[i];
@@ -136,12 +136,12 @@ public class World implements Renderable {
                     // skips default TitleType (so it does not override previous types)
                     if (curr != TileType.getDefault()) {
                         if (curr.getMinDepth() <= y && y <= curr.getMaxDepth()) {
-                            if (chance <= curr.getChance()) {
+                            if (changeType(curr.getChance())) {
                                 tiles[x][y].setTileType(curr);
 
                             }
                         } else if (curr.getMinDepth() - 25 <= y && y <= curr.getMaxDepth() + 25) {
-                            if (chance <= curr.getChance() / 2) {
+                            if (changeType(curr.getChance() / 2)) {
                                 tiles[x][y].setTileType(curr);
                             }
                         }
@@ -151,6 +151,11 @@ public class World implements Renderable {
         }
 
         lastGeneratedLayer += height;
+    }
+
+    private boolean changeType(float tileChance) {
+        float chance = (float) Math.random();
+        return chance <= tileChance;
     }
 
 }
